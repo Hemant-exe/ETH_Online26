@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <!-- Heart shape with lock cutout -->
+  <path d="M150 220 
+           C 220 170, 280 120, 280 70 
+           C 280 40, 250 20, 220 20 
+           C 190 20, 160 50, 150 80 
+           C 140 50, 110 20, 80 20 
+           C 50 20, 20 40, 20 70 
+           C 20 120, 80 170, 150 220" 
+        fill="#FF4B7D" stroke="none"/>
+  
+  <!-- Lock cutout (negative space) -->
+  <circle cx="150" cy="110" r="40" fill="white"/>
+  <rect x="130" y="100" width="40" height="65" rx="5" ry="5" fill="white"/>
+  
+  <!-- Lock outline -->
+  <circle cx="150" cy="110" r="25" fill="none" stroke="#2D3748" stroke-width="8" stroke-dasharray="56 18"/>
+  <rect x="135" y="110" width="30" height="45" rx="5" ry="5" fill="#2D3748"/>
+  
+  <!-- Keyhole -->
+  <circle cx="150" cy="125" r="5" fill="white"/>
+  <rect x="147" y="125" width="6" height="15" fill="white"/>
+</svg>

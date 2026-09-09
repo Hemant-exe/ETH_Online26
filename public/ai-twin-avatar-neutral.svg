@@ -1,0 +1,37 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="100" fill="url(#paint0_linear)" />
+  
+  <!-- Face -->
+  <circle cx="100" cy="85" r="50" fill="#E6E6FA" />
+  
+  <!-- Hair -->
+  <path d="M60 75C60 55 78 45 100 45C122 45 140 55 140 75V85C140 85 130 95 100 95C70 95 60 85 60 85V75Z" fill="#9370DB" />
+  
+  <!-- Eyes -->
+  <circle cx="80" cy="80" r="5" fill="#333" />
+  <circle cx="120" cy="80" r="5" fill="#333" />
+  
+  <!-- Smile -->
+  <path d="M85 95C90 105 110 105 115 95" stroke="#333" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- AI Circuits -->
+  <path d="M30 140C40 120 70 130 100 130C130 130 160 120 170 140" stroke="#7B68EE" stroke-width="2" />
+  <path d="M40 150C50 135 70 140 100 140C130 140 150 135 160 150" stroke="#7B68EE" stroke-width="2" />
+  <path d="M50 160C60 150 70 150 100 150C130 150 140 150 150 160" stroke="#7B68EE" stroke-width="2" />
+  
+  <!-- Digital Dots -->
+  <circle cx="60" cy="145" r="2" fill="#7B68EE" />
+  <circle cx="80" cy="135" r="2" fill="#7B68EE" />
+  <circle cx="120" cy="135" r="2" fill="#7B68EE" />
+  <circle cx="140" cy="145" r="2" fill="#7B68EE" />
+  <circle cx="70" cy="155" r="2" fill="#7B68EE" />
+  <circle cx="130" cy="155" r="2" fill="#7B68EE" />
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9370DB" />
+      <stop offset="1" stop-color="#483D8B" />
+    </linearGradient>
+  </defs>
+</svg> 

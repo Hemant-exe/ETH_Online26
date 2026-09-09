@@ -1,0 +1,20 @@
+var __generator = (this && this.__generator) || function (thisArg, body) {
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var auth_client_1 = require("./auth-client");
+// Mock for the font that was causing issues
+var Sora_Regular_ttf_1 = { default: '' };
+var _ = require("lodash");
+var store = require("store");
+var VERIDA_AUTH_CONTEXT = "_verida_auth_context";
+
+function default_1(contextName, config) {
+    <style>
+    @font-face {
+      font-family: "Sora";
+      /* Font URL replaced with empty string */
+      src: url("https://fonts.googleapis.com/css2?family=Sora&display=swap");
+    }
+
+     #verida-auth-client-canvas {
+} 

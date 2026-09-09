@@ -1,0 +1,1353 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 271.8 81.3% 55.9%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 326.7 73.3% 57.6%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 271.8 81.3% 55.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 271.8 81.3% 55.9%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 326.7 73.3% 57.6%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 271.8 81.3% 55.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #EC4899 #F9F5FF; /* Firefox - changed from purple to pink */
+}
+
+/* Chrome, Edge, and Safari */
+body::-webkit-scrollbar {
+  width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #F9F5FF;
+  border-radius: 20px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #F472B6, #EC4899); /* Changed gradient to be more pink-focused */
+  border-radius: 20px;
+  border: 3px solid #F9F5FF;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #F472B6, #DB2777); /* More saturated pink on hover */
+}
+
+/* Animation keyframes */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-medium {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-medium 5s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+/* Add these new animations for the dating-themed elements */
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+.animate-spin-reverse-slow {
+  animation: spin-reverse-slow 12s linear infinite;
+}
+
+/* Blur utilities */
+.blur-3xl {
+  --tw-blur: blur(64px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
+    var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+/* Creative shapes */
+.rounded-blob {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+.rounded-blob-2 {
+  border-radius: 40% 60% 70% 30% / 40% 50% 50% 60%;
+}
+
+.rounded-blob-3 {
+  border-radius: 50% 50% 40% 60% / 40% 60% 40% 60%;
+}
+
+/* Add these new shape classes for the date ideas section */
+.rounded-heart {
+  border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+  transform: rotate(45deg);
+}
+
+.heart-shape {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background-color: #ec4899;
+  transform: rotate(45deg);
+}
+
+.heart-shape:before,
+.heart-shape:after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ec4899;
+}
+
+.heart-shape:before {
+  top: -10px;
+  left: 0;
+}
+
+.heart-shape:after {
+  top: 0;
+  left: -10px;
+}
+
+/* Background patterns */
+.bg-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236D28D9' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Blockchain visualization for light theme */
+.blockchain-visualization-light {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.blockchain-block-light {
+  position: absolute;
+  width: 60px;
+  height: 40px;
+  background: rgba(109, 40, 217, 0.1);
+  border: 1px solid rgba(109, 40, 217, 0.3);
+  border-radius: 8px;
+}
+
+.blockchain-block-light.block-1 {
+  top: 30%;
+  left: 10%;
+  animation: float 4s ease-in-out infinite;
+}
+
+.blockchain-block-light.block-2 {
+  top: 20%;
+  left: 35%;
+  animation: float 4s ease-in-out infinite 0.5s;
+}
+
+.blockchain-block-light.block-3 {
+  top: 40%;
+  left: 60%;
+  animation: float 4s ease-in-out infinite 1s;
+}
+
+.blockchain-block-light.block-4 {
+  top: 60%;
+  left: 75%;
+  animation: float 4s ease-in-out infinite 1.5s;
+}
+
+.blockchain-connection-light {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(to right, rgba(109, 40, 217, 0.3), rgba(236, 72, 153, 0.3));
+  z-index: 0;
+}
+
+.blockchain-connection-light.connection-1-2 {
+  width: 25%;
+  top: 35%;
+  left: 15%;
+  transform: rotate(15deg);
+}
+
+.blockchain-connection-light.connection-2-3 {
+  width: 25%;
+  top: 30%;
+  left: 40%;
+  transform: rotate(15deg);
+}
+
+.blockchain-connection-light.connection-3-4 {
+  width: 15%;
+  top: 50%;
+  left: 65%;
+  transform: rotate(45deg);
+}
+
+/* Enhanced background patterns */
+.bg-hearts-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23EC4899' fill-opacity='0.05' d='M30 48.5c-0.5 0-1-0.2-1.4-0.6L13.2 32.5c-3.6-3.6-3.6-9.4 0-13 1.7-1.7 4-2.7 6.5-2.7 2.5 0 4.8 1 6.5 2.7l3.8 3.8 3.8-3.8c1.7-1.7 4-2.7 6.5-2.7 2.5 0 4.8 1 6.5 2.7 3.6 3.6 3.6 9.4 0 13L31.4 47.9c-0.4 0.4-0.9 0.6-1.4 0.6z'/%3E%3C/svg%3E");
+}
+
+/* Add these new background animations and styles */
+@keyframes float-diagonal {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-15px) translateX(15px);
+  }
+}
+
+@keyframes float-diagonal-reverse {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-15px) translateX(-15px);
+  }
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+  75% {
+    transform: translateY(5px) rotate(-2deg);
+  }
+}
+
+@keyframes flowing {
+  0% {
+    transform: translateX(-100%) translateY(0);
+  }
+  100% {
+    transform: translateX(100vw) translateY(0);
+  }
+}
+
+@keyframes flowing-reverse {
+  0% {
+    transform: translateX(100vw) translateY(0);
+  }
+  100% {
+    transform: translateX(-100%) translateY(0);
+  }
+}
+
+@keyframes flowing-diagonal {
+  0% {
+    transform: translateX(-100%) translateY(-50px);
+  }
+  100% {
+    transform: translateX(100vw) translateY(50px);
+  }
+}
+
+@keyframes flowing-diagonal-reverse {
+  0% {
+    transform: translateX(100vw) translateY(-50px);
+  }
+  100% {
+    transform: translateX(-100%) translateY(50px);
+  }
+}
+
+.animate-float-diagonal {
+  animation: float-diagonal 8s ease-in-out infinite;
+}
+
+.animate-float-diagonal-reverse {
+  animation: float-diagonal-reverse 7s ease-in-out infinite;
+}
+
+.animate-wave {
+  animation: wave 6s ease-in-out infinite;
+}
+
+.animate-flowing {
+  animation: flowing 25s linear infinite;
+}
+
+.animate-flowing-slow {
+  animation: flowing 40s linear infinite;
+}
+
+.animate-flowing-reverse {
+  animation: flowing-reverse 30s linear infinite;
+}
+
+.animate-flowing-diagonal {
+  animation: flowing-diagonal 35s linear infinite;
+}
+
+.animate-flowing-diagonal-reverse {
+  animation: flowing-diagonal-reverse 45s linear infinite;
+}
+
+/* Elegant heart styles */
+.elegant-heart {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.elegant-heart::before,
+.elegant-heart::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 16px;
+  border-radius: 10px 10px 0 0;
+  background: rgba(236, 72, 153, 0.3);
+}
+
+.elegant-heart::before {
+  left: 10px;
+  transform: rotate(-45deg);
+  transform-origin: 0 100%;
+}
+
+.elegant-heart::after {
+  left: 0;
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}
+
+/* Outlined heart */
+.outlined-heart {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.outlined-heart::before,
+.outlined-heart::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 16px;
+  border-radius: 10px 10px 0 0;
+  background: transparent;
+  border: 1px solid rgba(109, 40, 217, 0.3);
+}
+
+.outlined-heart::before {
+  left: 10px;
+  transform: rotate(-45deg);
+  transform-origin: 0 100%;
+}
+
+.outlined-heart::after {
+  left: 0;
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}
+
+/* Glowing effect */
+.glow {
+  filter: drop-shadow(0 0 2px rgba(236, 72, 153, 0.5));
+}
+
+.glow-purple {
+  filter: drop-shadow(0 0 2px rgba(109, 40, 217, 0.5));
+}
+
+/* Path animation */
+.path-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Enhanced background patterns */
+.bg-hearts-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23EC4899' fill-opacity='0.03' d='M30 48.5c-0.5 0-1-0.2-1.4-0.6L13.2 32.5c-3.6-3.6-3.6-9.4 0-13 1.7-1.7 4-2.7 6.5-2.7 2.5 0 4.8 1 6.5 2.7l3.8 3.8 3.8-3.8c1.7-1.7 4-2.7 6.5-2.7 2.5 0 4.8 1 6.5 2.7 3.6 3.6 3.6 9.4 0 13L31.4 47.9c-0.4 0.4-0.9 0.6-1.4 0.6z'/%3E%3C/svg%3E");
+}
+
+.bg-love-pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: radial-gradient(circle at 20% 30%, rgba(236, 72, 153, 0.03) 0%, transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(109, 40, 217, 0.03) 0%, transparent 60%),
+    radial-gradient(circle at 50% 100%, rgba(236, 72, 153, 0.03) 0%, transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(109, 40, 217, 0.03) 0%, transparent 60%);
+}
+
+/* Beautiful wave path for background elements */
+.wave-path {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  opacity: 0.1;
+}
+
+.wave-path-top {
+  top: 15%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath fill='%23EC4899' d='M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z' opacity='0.15'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.wave-path-bottom {
+  bottom: 15%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath fill='%236D28D9' d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' opacity='0.15'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* Add these innovative animation and styling elements at the end of the file */
+
+/* Innovative design patterns for dating site */
+@keyframes heartbeat-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.6);
+    transform: scale(1.08);
+  }
+}
+
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg);
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes shimmering-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.heartbeat-glow {
+  animation: heartbeat-glow 2s ease-in-out infinite;
+}
+
+.orbiting-element {
+  --orbit-radius: 120px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: orbit 15s linear infinite;
+}
+
+.orbiting-element-reverse {
+  --orbit-radius: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: orbit 12s linear infinite reverse;
+}
+
+.sparkle-effect {
+  animation: sparkle 3s ease-in-out infinite;
+}
+
+/* DNA-style double helix animation for compatibility visualization */
+.dna-strand {
+  position: relative;
+  height: 200px;
+  width: 60px;
+  transform: rotate(30deg);
+}
+
+.dna-step {
+  position: absolute;
+  height: 2px;
+  width: 30px;
+  background: linear-gradient(90deg, rgba(109, 40, 217, 0.7), transparent);
+  transform-origin: left center;
+}
+
+.dna-step:nth-child(even) {
+  left: 30px;
+  background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.7));
+  transform-origin: right center;
+}
+
+@keyframes dna-rotate {
+  0%,
+  100% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(90deg);
+  }
+}
+
+/* Compatibility meter styles */
+.compatibility-meter {
+  position: relative;
+  height: 40px;
+  width: 200px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.compatibility-meter-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #6d28d9, #ec4899);
+  background-size: 200% 200%;
+  animation: shimmering-gradient 3s ease infinite;
+}
+
+.compatibility-meter-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Polaroid-style frames for dating profiles */
+.polaroid-frame {
+  padding: 10px 10px 30px 10px;
+  background: white;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transform: rotate(var(--rotation, -3deg));
+  transition: all 0.3s ease;
+}
+
+.polaroid-frame:hover {
+  transform: rotate(0deg) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Dating card swipe animation */
+.swipe-card-container {
+  position: relative;
+  width: 280px;
+  height: 380px;
+  perspective: 1000px;
+}
+
+.swipe-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.swipe-card:hover {
+  transform: translateY(-10px) rotateY(-5deg);
+}
+
+.swipe-card.swipe-right {
+  animation: swipeRight 0.8s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.swipe-card.swipe-left {
+  animation: swipeLeft 0.8s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes swipeRight {
+  to {
+    transform: translateX(120%) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes swipeLeft {
+  to {
+    transform: translateX(-120%) rotate(-30deg);
+    opacity: 0;
+  }
+}
+
+/* Innovative love theme pattern generator */
+.love-pattern-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.love-pattern-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at 10% 20%, rgba(236, 72, 153, 0.02) 0%, transparent 60%),
+    radial-gradient(circle at 90% 60%, rgba(109, 40, 217, 0.02) 0%, transparent 60%),
+    radial-gradient(circle at 50% 100%, rgba(236, 72, 153, 0.03) 0%, transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(109, 40, 217, 0.03) 0%, transparent 60%);
+  opacity: 0.8;
+  z-index: -1;
+}
+
+/* Interactive connection lines */
+.connection-line {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(109, 40, 217, 0.5), rgba(236, 72, 153, 0.5));
+  transform-origin: left center;
+}
+
+.connection-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6d28d9, #ec4899);
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+}
+
+/* Textures and patterns */
+.confetti-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.confetti-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: var(--color);
+  border-radius: var(--radius, 0);
+  opacity: var(--opacity, 0.8);
+  animation: confetti-fall var(--fall-duration, 5s) linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(calc(100vh + 100px)) rotate(720deg);
+  }
+}
+
+/* Glass card style */
+.glass-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Heart rate monitor animation */
+.heart-rate-line {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(236, 72, 153, 0.3) 10%,
+    rgba(236, 72, 153, 0.8) 20%,
+    rgba(236, 72, 153, 0.3) 30%,
+    rgba(236, 72, 153, 0.8) 40%,
+    rgba(236, 72, 153, 1) 50%,
+    rgba(236, 72, 153, 0.8) 60%,
+    rgba(236, 72, 153, 0.3) 70%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: heart-rate 3s linear infinite;
+}
+
+@keyframes heart-rate {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* 3D flip card for profiles */
+.flip-card {
+  perspective: 1000px;
+  width: 300px;
+  height: 400px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/* Gooey button effect */
+.gooey-button {
+  position: relative;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.gooey-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s ease;
+}
+
+.gooey-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Romantic scroll trigger effects */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Love letter styles */
+.love-letter {
+  position: relative;
+  background: #fff;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.love-letter::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #6d28d9, #ec4899);
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+.love-letter::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  bottom: -8px;
+  height: 16px;
+  width: 70%;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+  z-index: -2;
+  border-radius: 50%;
+}
+
+.love-text {
+  font-family: "Dancing Script", cursive;
+  line-height: 1.6;
+}
+
+/* Matchmaker slider */
+.matchmaker-slider {
+  position: relative;
+  height: 8px;
+  background: linear-gradient(to right, rgba(109, 40, 217, 0.2), rgba(236, 72, 153, 0.2));
+  border-radius: 4px;
+}
+
+.matchmaker-handle {
+  position: absolute;
+  top: 50%;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #6d28d9, #ec4899);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+.matchmaker-handle:hover {
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.8);
+}
+
+/* Magic color gradients */
+.magic-gradient {
+  background: linear-gradient(-45deg, #6d28d9, #ec4899, #8b5cf6, #f472b6);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Character counter for dating profiles */
+.character-counter {
+  position: relative;
+  width: 30px;
+  height: 30px;
+}
+
+.character-counter-circle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(#6d28d9 var(--percentage, 0%), #e5e7eb var(--percentage, 0%));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.character-counter-mask {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Interactive heart connector */
+.heart-connector {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, rgba(109, 40, 217, 0.3), rgba(236, 72, 153, 0.3));
+}
+
+.heart-connector-dot {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6d28d9, #ec4899);
+  animation: travel-path 5s linear infinite;
+}
+
+@keyframes travel-path {
+  0% {
+    left: 0%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Love emoji reactions */
+.emoji-reaction {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.emoji-reaction:hover {
+  transform: scale(1.3);
+}
+
+.emoji-reaction.active {
+  animation: emoji-pulse 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes emoji-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+}
+
+/* Music visualization for shared music interests */
+.music-bar {
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(to top, #6d28d9, #ec4899);
+  border-radius: 2px;
+  animation: music-visualize 1.2s ease infinite;
+}
+
+@keyframes music-visualize {
+  0%,
+  100% {
+    height: 4px;
+  }
+  50% {
+    height: 20px;
+  }
+}
+
+.music-bar:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.music-bar:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.music-bar:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+.music-bar:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+/* Add these new cursor styles and animations at the end of the file */
+
+@keyframes cursor-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(5deg);
+  }
+}
+
+@keyframes cursor-float-reverse {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-5deg);
+  }
+}
+
+@keyframes cursor-move {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(20px, 15px);
+  }
+  50% {
+    transform: translate(0, 30px);
+  }
+  75% {
+    transform: translate(-20px, 15px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes cursor-move-reverse {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-20px, 15px);
+  }
+  50% {
+    transform: translate(0, 30px);
+  }
+  75% {
+    transform: translate(20px, 15px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes cursor-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.cursor-element {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cursor-element::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ff69b4;
+  opacity: 0.2;
+  filter: blur(5px);
+  transform: scale(1.5);
+}
+
+.cursor-element::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #ff69b4;
+  border-right: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  transform: rotate(45deg);
+  opacity: 0.8;
+}
+
+.cursor-element.style-1 {
+  animation: cursor-float 8s ease-in-out infinite, cursor-move 20s linear infinite;
+}
+
+.cursor-element.style-2 {
+  animation: cursor-float-reverse 7s ease-in-out infinite, cursor-move-reverse 25s linear infinite;
+}
+
+.cursor-element.style-3 {
+  animation: cursor-float 9s ease-in-out infinite, cursor-move 30s linear infinite;
+}
+
+.cursor-element.style-4 {
+  animation: cursor-float-reverse 6s ease-in-out infinite, cursor-move-reverse 22s linear infinite;
+}
+
+.cursor-element.pulse {
+  animation: cursor-pulse 3s ease-in-out infinite;
+}
+
+.cursor-trail {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ff69b4;
+  opacity: 0.2;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+/* Remove the old arrow styles that we're replacing */
+.love-arrow,
+.dotted-arrow,
+.curved-arrow,
+.love-arrow-shaft,
+.love-arrow-head,
+.love-arrow-heart,
+.dotted-arrow-shaft,
+.dotted-arrow-head,
+.curved-arrow-shaft,
+.curved-arrow-head {
+  display: none;
+}
+
+/* Custom scrollable container - used for components with scroll areas */
+.custom-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #EC4899 #F9F5FF; /* Firefox - changed to pink */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #F9F5FF;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #F472B6, #EC4899); /* Changed to pink gradient */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #F472B6, #DB2777); /* More saturated pink on hover */
+}
+
+/* Verida Auth Button Styles */
+.btn-auth {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  background-color: #4f46e5;
+  color: white;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-auth:hover {
+  background-color: #4338ca;
+}
+
+.btn-auth:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-loading {
+  background-color: #818cf8;
+  color: white;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: wait;
+  border: none;
+}
+
+.btn-success {
+  background-color: #10b981;
+  color: white;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+}
+
+/* Blockchain nodes animation */
+.blockchain-nodes {
+  background-image: radial-gradient(circle at center, rgba(109, 40, 217, 0.1) 2px, transparent 2px);
+  background-size: 50px 50px;
+  width: 100%;
+  height: 100%;
+  animation: nodeFloat 15s infinite linear;
+}
+
+@keyframes nodeFloat {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+/* Animation utilities */
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background-size: 200% 100%;
+}
+
+.animate-shimmer-fast {
+  animation: shimmer 1.5s infinite linear;
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
