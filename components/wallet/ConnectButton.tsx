@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation"
 import { loadExistingNFTData } from "@/utils/nft-check"
 
 import {
-  isLeapWalletInstalled,
-  connectLeap,
+  isWalletAvailable,
+  connectWallet,
   formatAddress,
-  disconnectLeap
+  disconnectWallet
 } from "@/utils/wallet"
 
 /* ---------- component ---------- */
@@ -36,18 +36,18 @@ export default function ConnectButton() {
 
     try {
       // Check if MetaMask is likely installed but Leap is not
-      if (isMetaMaskLikelyInstalled() && !isLeapWalletInstalled()) {
+      if (isMetaMaskLikelyInstalled() && !isWalletAvailable()) {
         throw new Error("Another wallet extension (likely MetaMask) detected. Please install Leap wallet or disable other wallet extensions for this site.");
       }
       
-      if (!isLeapWalletInstalled()) {
+      if (!isWalletAvailable()) {
           // Open a new tab with the Leap wallet website if not installed
         window.open("https://www.leapwallet.io/", "_blank")
         throw new Error("Leap wallet not installed. Please install it and reload this page.")
       }
 
       try {
-        const address = await connectLeap()
+        const address = await connectWallet()
         
         if (address) {
           setWalletAddress(address)
@@ -102,9 +102,9 @@ export default function ConnectButton() {
   /* Disconnect wallet */
   const disconnectWallet = async () => {
     try {
-      // Call the disconnectLeap utility function
-      if (isLeapWalletInstalled()) {
-        await disconnectLeap()
+      // Call the disconnectWallet utility function
+      if (isWalletAvailable()) {
+        await disconnectWallet()
       }
       
       // Ensure the local state is updated

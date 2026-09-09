@@ -46,10 +46,10 @@ import {
 } from "@/components/ui/dialog"
 import type { Conversation, Message } from "@/app/types/chat"
 import { aiSuggestions } from "@/data/ai-suggestions"
-import { useVeridaClient } from "@/app/lib/clientside-verida"
-import { saveMessage, convertToVeridaMessage } from "@/app/lib/chat-message-service"
+import { useAccountSession } from "@/app/lib/account/hooks"
+import { saveMessage, convertToStoredMessage } from "@/app/lib/chat-message-service"
 import { generateAiTwinChatResponse } from "@/app/lib/ai-twin-chat-service"
-import { getUserAiTwin } from "@/app/lib/verida-ai-twin-service"
+import { getUserAiTwin } from "@/app/lib/twin-profile-service"
 import { HeartLoader } from "@/components/ui/heart-loader"
 
 // Extended Conversation type to include name property
@@ -72,7 +72,7 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
   const [autoSendCountdown, setAutoSendCountdown] = useState(0)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [showSettings, setShowSettings] = useState(false)
-  const { client, isLoading, getDidId } = useVeridaClient()
+  const { client, isLoading, getDidId } = useAccountSession()
   const [userDid, setUserDid] = useState<string | null>(null)
   const [userName, setUserName] = useState("Me")
   const autoSendTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -263,7 +263,7 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
       if (userDid && client && client.isConnected()) {
         try {
           // Convert to Verida format
-          const veridaMessage = convertToVeridaMessage(
+          const veridaMessage = convertToStoredMessage(
             messageObj,
             conversation.id,
             userDid,
@@ -436,7 +436,7 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
       
       try {
         // Convert to Verida format and save
-        const veridaMessage = convertToVeridaMessage(
+        const veridaMessage = convertToStoredMessage(
           aiMessage,
           conversation.id,
           `ai-twin-${userDid}`, // AI twin DID

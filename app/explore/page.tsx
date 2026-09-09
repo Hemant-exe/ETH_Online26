@@ -3,26 +3,34 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import ExploreMatches from "./components/explore-matches"
+import { accountSession } from "@/app/lib/account/session"
 
 export default function ExplorePage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Check if the wallet is connected by looking for saved address
-    const walletAddress = localStorage.getItem("walletAddress")
-    const cheqdWalletAddress = localStorage.getItem("cheqdWalletAddress")
-    const onboardingCompleted = localStorage.getItem("onboardingCompleted")
-    
-    if (!walletAddress) {
-      // Redirect to wallet page if no wallet address found
-      router.push("/wallet")
-    } else if (!cheqdWalletAddress || !onboardingCompleted) {
-      // Redirect to onboarding if Cheqd wallet not connected or onboarding not complete
-      router.push("/onboarding")
-    } else {
+    // Browsing needs a session, nothing more.
+    //
+    // This used to demand a connected wallet *and* a Cheqd wallet before
+    // showing anyone a single profile, which put two blockchain prompts in
+    // front of the first thing a new user wants to do. Verification is what
+    // Explore actually cares about, and it changes ranking and available
+    // actions rather than access: unverified profiles are shown, flagged and
+    // rate-limited.
+    const check = async () => {
+      await accountSession.connect()
+      const onboardingCompleted = localStorage.getItem("onboardingCompleted")
+
+      if (!onboardingCompleted) {
+        router.push("/onboarding")
+        return
+      }
+
       setIsLoading(false)
     }
+
+    check()
   }, [router])
 
   if (isLoading) {

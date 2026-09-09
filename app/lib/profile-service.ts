@@ -1,20 +1,23 @@
 'use client';
 
-import { veridaClient } from './verida-client-wrapper';
-import { DB_NAMES } from './verida-config';
+import { accountSession } from './account/session';
+import { COLLECTIONS, findOne, storage, upsert, type Stored } from './storage';
 
-// Database names for different profile data types
-const PROFILE_DB = DB_NAMES.PROFILE;
-const PREFERENCES_DB = DB_NAMES.PREFERENCES;
-const PHOTOS_DB = DB_NAMES.PHOTOS;
-const MATCHES_DB = DB_NAMES.MATCHES;
-const MESSAGES_DB = DB_NAMES.MESSAGES;
+/**
+ * Profile, photo and preference persistence.
+ *
+ * All six public methods keep the signatures they have always had. Only the
+ * storage layer underneath them changed: reads and writes now go through
+ * `StorageAdapter` instead of a remote encrypted database, so the app works
+ * offline and needs no vendor session to render a profile.
+ */
 
-// Interface for dating profile
+/** A user's public dating profile. */
 export interface DatingProfile {
+  /** Account key. Derived from the human anchor once the user is verified. */
   did: string;
   displayName: string;
-  age: string; 
+  age: string;
   location: string;
   bio: string;
   interests: string[];
@@ -22,9 +25,24 @@ export interface DatingProfile {
   primaryPhotoIndex: number;
   createdAt: string;
   updatedAt: string;
+
+  /**
+   * World ID nullifier hash for this person, or absent if unverified.
+   *
+   * This is the uniqueness key for the whole product: one nullifier holds at
+   * most one active profile, which is what makes duplicate and catfish
+   * profiles impossible rather than merely discouraged. Enforced server-side
+   * in `app/api/world/verify/route.ts` — never trust a client-set value.
+   */
+  humanAnchor?: string;
+  /** When Selfie Check last succeeded, ISO 8601. */
+  verifiedAt?: string;
+  /** The credential that was presented, e.g. Selfie Check. */
+  credentialType?: string;
+  /** AgentBook id of this user's twin, once registered. */
+  agentId?: string;
 }
 
-// Interface for photos data
 export interface ProfilePhoto {
   did: string;
   photoUrl: string;
@@ -34,7 +52,6 @@ export interface ProfilePhoto {
   createdAt: string;
 }
 
-// Interface for preferences data
 export interface DatingPreferences {
   did: string;
   ageRange: { min: number; max: number };
@@ -47,70 +64,42 @@ export interface DatingPreferences {
 }
 
 /**
- * ProfileService class to handle storing and retrieving profile data from Verida
+ * Resolves the account key to operate on.
+ *
+ * Every method accepts an optional explicit key and otherwise falls back to
+ * the current session, matching the previous behaviour. Establishing a session
+ * cannot fail the way connecting to a remote vault could, but the guard is
+ * kept so callers still get a clear error during server rendering.
  */
+async function requireAccountId(explicit?: string): Promise<string> {
+  if (explicit) return explicit;
+
+  if (!accountSession.isConnected()) {
+    await accountSession.connect();
+  }
+
+  const accountId = accountSession.getAccountId();
+  if (!accountId) {
+    throw new Error('No active account session. Complete onboarding first.');
+  }
+  return accountId;
+}
+
 export class ProfileService {
   /**
-   * Save or update user profile
-   * @param {Partial<DatingProfile>} profileData - Profile data to save
-   * @returns {Promise<DatingProfile>} - Saved profile
+   * Creates or updates the current user's profile.
+   *
+   * Upsert keyed on the account id, so a user has exactly one profile row.
    */
   public static async saveProfile(profileData: Partial<DatingProfile>): Promise<DatingProfile> {
-    try {
-      // Ensure connected to Verida
-      if (!veridaClient.isConnected()) {
-        console.log("Not connected to Verida, attempting to connect...");
-        const connected = await veridaClient.connect();
-        if (!connected) {
-          throw new Error('Failed to connect to Verida network');
-        }
-        console.log("Connected to Verida successfully");
-      }
+    const did = await requireAccountId(profileData.did);
+    const now = new Date().toISOString();
 
-      const did = veridaClient.getDid();
-      if (!did) {
-        throw new Error('User not authenticated with Verida');
-      }
+    const existing = await findOne<DatingProfile>(COLLECTIONS.PROFILE, { did });
 
-      let profileDb;
-      try {
-        // Open profile database
-        profileDb = await veridaClient.openDatabase(PROFILE_DB);
-      } catch (dbError) {
-        console.error("Initial database open failed, reconnecting...", dbError);
-        
-        // If opening the database fails, try reconnecting
-        await veridaClient.disconnect();
-        await veridaClient.connect();
-        
-        // Try opening the database again
-        profileDb = await veridaClient.openDatabase(PROFILE_DB);
-      }
-
-      // Check if profile already exists
-      const existingProfiles = await profileDb.getMany({
-        did: did
-      });
-
-      const now = new Date().toISOString();
-      
-      let profile: DatingProfile;
-      
-      if (existingProfiles.length > 0) {
-        // Update existing profile
-        profile = {
-          ...existingProfiles[0],
-          ...profileData,
-          did,
-          updatedAt: now
-        };
-        
-        await profileDb.save(profile, {
-          did: did
-        });
-      } else {
-        // Create new profile
-        profile = {
+    const profile: DatingProfile = existing
+      ? { ...existing, ...profileData, did, updatedAt: now }
+      : {
           did,
           displayName: profileData.displayName || '',
           age: profileData.age || '',
@@ -120,227 +109,117 @@ export class ProfileService {
           relationshipGoals: profileData.relationshipGoals || '',
           primaryPhotoIndex: profileData.primaryPhotoIndex || 0,
           createdAt: now,
-          updatedAt: now
+          updatedAt: now,
         };
-        
-        await profileDb.save(profile);
-      }
-      
-      return profile;
-    } catch (error) {
-      console.error('Error saving profile to Verida:', error);
-      throw error;
+
+    // The human anchor is authoritative from the session, not from caller
+    // input, so a crafted `profileData` cannot claim someone else's proof.
+    const anchor = accountSession.getHumanAnchor();
+    if (anchor) {
+      const snapshot = accountSession.getSnapshot();
+      profile.humanAnchor = anchor;
+      profile.verifiedAt = snapshot?.verifiedAt ?? profile.verifiedAt;
+      profile.credentialType = snapshot?.credentialType ?? profile.credentialType;
     }
+
+    await upsert(COLLECTIONS.PROFILE, { did }, profile as unknown as Record<string, unknown>);
+    return profile;
   }
 
-  /**
-   * Get user profile
-   * @param {string} did - DID of the user (optional, uses current user if not provided)
-   * @returns {Promise<DatingProfile | null>} - User profile or null if not found
-   */
   public static async getProfile(did?: string): Promise<DatingProfile | null> {
-    try {
-      // Ensure connected to Verida
-      if (!veridaClient.isConnected()) {
-        await veridaClient.connect();
-      }
-
-      const userDid = did || veridaClient.getDid();
-      if (!userDid) {
-        throw new Error('User not authenticated with Verida');
-      }
-
-      // Open profile database
-      const profileDb = await veridaClient.openDatabase(PROFILE_DB);
-
-      // Get profile data
-      const profiles = await profileDb.getMany({
-        did: userDid
-      });
-
-      return profiles.length > 0 ? profiles[0] : null;
-    } catch (error) {
-      console.error('Error getting profile from Verida:', error);
-      throw error;
-    }
+    const accountId = await requireAccountId(did);
+    return await findOne<DatingProfile>(COLLECTIONS.PROFILE, { did: accountId });
   }
 
   /**
-   * Save profile photo
-   * @param {string} photoUrl - URL or base64 data of the photo
-   * @param {string} description - Description of the photo
-   * @param {boolean} isPrivate - Whether the photo is private
-   * @param {number} order - Display order of the photo
-   * @returns {Promise<ProfilePhoto>} - Saved photo data
+   * Appends a photo to the user's gallery.
+   *
+   * Photos are separate rows rather than an array on the profile so a large
+   * base64 image cannot fail the write for the profile's text fields.
    */
   public static async saveProfilePhoto(
     photoUrl: string,
     description: string = '',
     isPrivate: boolean = false,
-    order: number = 0
+    order: number = 0,
   ): Promise<ProfilePhoto> {
-    try {
-      // Ensure connected to Verida
-      if (!veridaClient.isConnected()) {
-        await veridaClient.connect();
-      }
+    const did = await requireAccountId();
 
-      const did = veridaClient.getDid();
-      if (!did) {
-        throw new Error('User not authenticated with Verida');
-      }
+    const photo: ProfilePhoto = {
+      did,
+      photoUrl,
+      description,
+      isPrivate,
+      order,
+      createdAt: new Date().toISOString(),
+    };
 
-      // Open photos database
-      const photosDb = await veridaClient.openDatabase(PHOTOS_DB);
-
-      const now = new Date().toISOString();
-      
-      // Create photo object
-      const photo: ProfilePhoto = {
-        did,
-        photoUrl,
-        description,
-        isPrivate,
-        order,
-        createdAt: now
-      };
-      
-      // Save to database
-      await photosDb.save(photo);
-      
-      return photo;
-    } catch (error) {
-      console.error('Error saving photo to Verida:', error);
-      throw error;
-    }
+    // Keyed on (owner, order) so re-saving slot 2 replaces slot 2 rather than
+    // accumulating duplicates each time the photo step is revisited.
+    await upsert(
+      COLLECTIONS.PHOTOS,
+      { did, order },
+      photo as unknown as Record<string, unknown>,
+      'photo',
+    );
+    return photo;
   }
 
-  /**
-   * Get all profile photos
-   * @param {string} did - DID of the user (optional, uses current user if not provided)
-   * @returns {Promise<ProfilePhoto[]>} - Array of user photos
-   */
   public static async getProfilePhotos(did?: string): Promise<ProfilePhoto[]> {
-    try {
-      // Ensure connected to Verida
-      if (!veridaClient.isConnected()) {
-        await veridaClient.connect();
-      }
-
-      const userDid = did || veridaClient.getDid();
-      if (!userDid) {
-        throw new Error('User not authenticated with Verida');
-      }
-
-      // Open photos database
-      const photosDb = await veridaClient.openDatabase(PHOTOS_DB);
-
-      // Get photos data
-      const photos = await photosDb.getMany({
-        did: userDid
-      });
-
-      // Sort by order
-      return photos.sort((a: ProfilePhoto, b: ProfilePhoto) => a.order - b.order);
-    } catch (error) {
-      console.error('Error getting photos from Verida:', error);
-      throw error;
-    }
+    const accountId = await requireAccountId(did);
+    const photos = await storage.list<Stored<ProfilePhoto>>(COLLECTIONS.PHOTOS, {
+      did: accountId,
+    });
+    return photos.sort((a, b) => a.order - b.order);
   }
 
-  /**
-   * Save user preferences
-   * @param {Partial<DatingPreferences>} preferencesData - Preferences data to save
-   * @returns {Promise<DatingPreferences>} - Saved preferences
-   */
-  public static async savePreferences(preferencesData: Partial<DatingPreferences>): Promise<DatingPreferences> {
-    try {
-      // Ensure connected to Verida
-      if (!veridaClient.isConnected()) {
-        await veridaClient.connect();
-      }
+  public static async savePreferences(
+    preferencesData: Partial<DatingPreferences>,
+  ): Promise<DatingPreferences> {
+    const did = await requireAccountId(preferencesData.did);
+    const now = new Date().toISOString();
 
-      const did = veridaClient.getDid();
-      if (!did) {
-        throw new Error('User not authenticated with Verida');
-      }
+    const existing = await findOne<DatingPreferences>(COLLECTIONS.PREFERENCES, { did });
 
-      // Open preferences database
-      const preferencesDb = await veridaClient.openDatabase(PREFERENCES_DB);
-
-      // Check if preferences already exist
-      const existingPreferences = await preferencesDb.getMany({
-        did: did
-      });
-
-      const now = new Date().toISOString();
-      
-      let preferences: DatingPreferences;
-      
-      if (existingPreferences.length > 0) {
-        // Update existing preferences
-        preferences = {
-          ...existingPreferences[0],
-          ...preferencesData,
+    const preferences: DatingPreferences = existing
+      ? { ...existing, ...preferencesData, did, updatedAt: now }
+      : {
           did,
-          updatedAt: now
-        };
-        
-        await preferencesDb.save(preferences, {
-          did: did
-        });
-      } else {
-        // Create new preferences
-        preferences = {
-          did,
-          ageRange: preferencesData.ageRange || { min: 18, max: 50 },
-          locationPreference: preferencesData.locationPreference || 'worldwide',
+          ageRange: preferencesData.ageRange || { min: 18, max: 99 },
+          locationPreference: preferencesData.locationPreference || '',
           distanceRange: preferencesData.distanceRange || 50,
           lookingFor: preferencesData.lookingFor || [],
           dealBreakers: preferencesData.dealBreakers || [],
           createdAt: now,
-          updatedAt: now
+          updatedAt: now,
         };
-        
-        await preferencesDb.save(preferences);
-      }
-      
-      return preferences;
-    } catch (error) {
-      console.error('Error saving preferences to Verida:', error);
-      throw error;
-    }
+
+    await upsert(
+      COLLECTIONS.PREFERENCES,
+      { did },
+      preferences as unknown as Record<string, unknown>,
+    );
+    return preferences;
+  }
+
+  public static async getPreferences(did?: string): Promise<DatingPreferences | null> {
+    const accountId = await requireAccountId(did);
+    return await findOne<DatingPreferences>(COLLECTIONS.PREFERENCES, { did: accountId });
   }
 
   /**
-   * Get user preferences
-   * @param {string} did - DID of the user (optional, uses current user if not provided)
-   * @returns {Promise<DatingPreferences | null>} - User preferences or null if not found
+   * Deletes a photo by display slot.
+   *
+   * Added for the photo step's remove action, which previously had no way to
+   * delete and left orphaned rows behind.
    */
-  public static async getPreferences(did?: string): Promise<DatingPreferences | null> {
-    try {
-      // Ensure connected to Verida
-      if (!veridaClient.isConnected()) {
-        await veridaClient.connect();
-      }
-
-      const userDid = did || veridaClient.getDid();
-      if (!userDid) {
-        throw new Error('User not authenticated with Verida');
-      }
-
-      // Open preferences database
-      const preferencesDb = await veridaClient.openDatabase(PREFERENCES_DB);
-
-      // Get preferences data
-      const preferences = await preferencesDb.getMany({
-        did: userDid
-      });
-
-      return preferences.length > 0 ? preferences[0] : null;
-    } catch (error) {
-      console.error('Error getting preferences from Verida:', error);
-      throw error;
+  public static async deleteProfilePhoto(order: number, did?: string): Promise<void> {
+    const accountId = await requireAccountId(did);
+    const existing = await findOne<ProfilePhoto>(COLLECTIONS.PHOTOS, { did: accountId, order });
+    if (existing) {
+      await storage.delete(COLLECTIONS.PHOTOS, existing._id);
     }
   }
-} 
+}
+
+export default ProfileService;

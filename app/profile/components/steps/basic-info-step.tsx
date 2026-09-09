@@ -11,8 +11,8 @@ import { Label } from "@/components/ui/label"
 import type { ProfileData } from "../profile-creation-flow"
 import { useToast } from "@/components/ui/use-toast"
 import { ProfileService } from "@/app/lib/profile-service"
-import { veridaClient } from "@/app/lib/verida-client-wrapper"
-import { useVeridaClient, useProfileRestService } from "@/app/lib/clientside-verida"
+import { accountSession } from "@/app/lib/account/session"
+import { useAccountSession, useProfileRepository } from "@/app/lib/account/hooks"
 
 interface BasicInfoStepProps {
   profileData: ProfileData
@@ -25,16 +25,16 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [clientInitialized, setClientInitialized] = useState<boolean>(false)
-  const { client, isLoading, error: clientError } = useVeridaClient();
-  const { service: profileRestService, isLoading: isRestLoading, error: restError } = useProfileRestService();
+  const { client, isLoading, error: clientError } = useAccountSession();
+  const { service: profileRestService, isLoading: isRestLoading, error: restError } = useProfileRepository();
   
   // Initialize Verida client if needed
   useEffect(() => {
     const initializeVeridaClient = async () => {
       try {
-        if (!veridaClient.getClient()) {
+        if (!accountSession.getClient()) {
           console.log("Initializing Verida client...");
-          await veridaClient.init();
+          await accountSession.init();
           setClientInitialized(true);
           console.log("Verida client initialized.");
         } else {
@@ -57,12 +57,12 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
         // Try to get the DID
         let did = null;
         try {
-          if (veridaClient.isConnected()) {
-            did = veridaClient.getDid();
+          if (accountSession.isConnected()) {
+            did = accountSession.getDid();
           } else {
-            const connected = await veridaClient.connect();
+            const connected = await accountSession.connect();
             if (connected) {
-              did = veridaClient.getDid();
+              did = accountSession.getDid();
             }
           }
         } catch (didError) {
@@ -133,24 +133,24 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
     // Get DID if possible to store in profile data
     try {
       // Make sure client is initialized
-      if (!veridaClient.getClient()) {
+      if (!accountSession.getClient()) {
         console.log("Initializing Verida client...");
-        await veridaClient.init();
+        await accountSession.init();
       }
       
       // Ensure we're connected to Verida to get DID
-      if (!veridaClient.isConnected()) {
+      if (!accountSession.isConnected()) {
         console.log("Connecting to Verida...");
-        const connected = await veridaClient.connect();
+        const connected = await accountSession.connect();
         if (connected) {
-          const did = veridaClient.getDid() || "unknown";
+          const did = accountSession.getDid() || "unknown";
           console.log("Connected successfully, got DID:", did);
           
           // Just store the DID in the profile data for later use
           updateProfileData({ did: did });
         }
       } else {
-        const did = veridaClient.getDid() || "unknown";
+        const did = accountSession.getDid() || "unknown";
         console.log("Already connected, using DID:", did);
         
         // Just store the DID in the profile data for later use

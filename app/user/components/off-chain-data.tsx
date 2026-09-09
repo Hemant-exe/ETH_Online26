@@ -7,7 +7,7 @@ import { PlusIcon, XIcon, PencilIcon, ImageIcon, TagIcon, SlidersHorizontal, Loc
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { useVeridaClient, useProfileRestService } from "@/app/lib/clientside-verida"
+import { useAccountSession, useProfileRepository } from "@/app/lib/account/hooks"
 
 // Define interface for off-chain data
 interface OffChainDataType {
@@ -51,8 +51,8 @@ export default function OffChainData() {
   const [isLoading, setIsLoading] = useState(true)
   
   // Get Verida client and profile service
-  const { client, isLoading: clientLoading, getDidId } = useVeridaClient()
-  const { service: profileRestService, isLoading: serviceLoading } = useProfileRestService()
+  const { client, isLoading: clientLoading, getDidId } = useAccountSession()
+  const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
   // Load real data from Verida and localStorage
   useEffect(() => {

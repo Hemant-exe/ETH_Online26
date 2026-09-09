@@ -8,8 +8,7 @@ import type { ProfileData } from "../profile-creation-flow"
 import { useToast } from "@/components/ui/use-toast"
 import { HeartLoader } from "@/components/ui/heart-loader"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { useVeridaClient, useProfileRestService } from "@/app/lib/clientside-verida"
-import { formatDataToSchema, SCHEMA_URLS, encodeSchemaUrl } from "@/app/lib/verida-schema-mapping"
+import { useAccountSession, useProfileRepository } from "@/app/lib/account/hooks"
 
 interface PhotosStepProps {
   profileData: ProfileData
@@ -22,8 +21,8 @@ export default function PhotosStep({ profileData, updateProfileData, onContinue 
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [isLoadingPhotos, setIsLoadingPhotos] = useState(false)
-  const { client, getAuthStatus, getDidId } = useVeridaClient()
-  const { service: profileRestService, isLoading: serviceLoading } = useProfileRestService()
+  const { client, getAuthStatus, getDidId } = useAccountSession()
+  const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   // Keep track of uploaded photos data for later use

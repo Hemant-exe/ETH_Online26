@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Wallet, LogOut, AlertCircle, ExternalLink } from "lucide-react"
-import { isLeapWalletInstalled, connectLeap, formatAddress, disconnectLeap } from "@/utils/wallet"
+import { isWalletAvailable, connectWallet, formatAddress, disconnectWallet } from "@/utils/wallet"
 import { checkNFTAndRedirect } from "@/utils/nft-check"
 
 export default function NavigationWalletButton() {
@@ -13,36 +13,21 @@ export default function NavigationWalletButton() {
   const [showError, setShowError] = useState(false)
   const [showAccountInfo, setShowAccountInfo] = useState(false)
 
-  // Helper function to detect if another wallet like MetaMask is installed
-  const isOtherWalletInstalled = (): boolean => {
-    return window.ethereum !== undefined && 
-           typeof window.ethereum === 'object' && 
-           (
-             ('isMetaMask' in window.ethereum) || 
-             !('isLeap' in window.ethereum)
-           );
-  }
-
-  const connectLeapWallet = async () => {
+  const handleConnectWallet = async () => {
     setIsConnecting(true)
     setError(null)
     setShowError(false)
     setShowAccountInfo(false)
 
     try {
-      // Check for other wallet extensions that might interfere
-      if (isOtherWalletInstalled() && !isLeapWalletInstalled()) {
-        throw new Error("Another wallet extension detected. Please install Leap wallet or disable other wallet extensions.");
-      }
-      
-      if (!isLeapWalletInstalled()) {
-        // Open a new tab with the Leap wallet website if not installed
-        window.open("https://www.leapwallet.io/", "_blank")
-        throw new Error("Leap wallet not installed. Please install it and reload this page.")
+      // Any EIP-1193 wallet is accepted; the wallet only ever holds the
+      // profile NFT, so there is no reason to require a specific extension.
+      if (!isWalletAvailable()) {
+        throw new Error("No EVM wallet found. Install MetaMask, Rabby or Leap and reload this page.")
       }
 
       try {
-        const address = await connectLeap()
+        const address = await connectWallet()
         
         if (address) {
           setWalletAddress(address)
@@ -88,9 +73,9 @@ export default function NavigationWalletButton() {
 
   const disconnectWallet = async () => {
     try {
-      // Call the disconnectLeap utility function
-      if (isLeapWalletInstalled()) {
-        await disconnectLeap()
+      // Call the disconnectWallet utility function
+      if (isWalletAvailable()) {
+        await disconnectWallet()
       }
       
       // Ensure the local state is updated
@@ -167,7 +152,7 @@ export default function NavigationWalletButton() {
     <>
       <Button
         variant="outline"
-        onClick={connectLeapWallet}
+        onClick={handleConnectWallet}
         disabled={isConnecting}
         className="hidden md:flex border-[#6D28D9] text-[#6D28D9] hover:bg-gradient-to-r hover:from-[#6D28D9] hover:to-[#EC4899] hover:text-white relative overflow-hidden group transition-all duration-300"
       >
@@ -206,7 +191,7 @@ export default function NavigationWalletButton() {
                     <li>Click &quot;+&quot; → &quot;Connect to EVM chains&quot;</li>
                     <li>Add custom network: ID 1301, RPC https://sepolia.unichain.org</li>
                   </ol>
-                  <button onClick={connectLeapWallet} className="mt-1 text-blue-600 hover:underline">Try Again</button>
+                  <button onClick={handleConnectWallet} className="mt-1 text-blue-600 hover:underline">Try Again</button>
                 </div>
               )}
             </div>
@@ -232,7 +217,7 @@ export default function NavigationWalletButton() {
   ) : (
     <>
       <Button
-        onClick={connectLeapWallet}
+        onClick={handleConnectWallet}
         disabled={isConnecting}
         className="bg-gradient-to-r from-[#6D28D9] to-[#EC4899] text-white hover:opacity-90 w-full group relative overflow-hidden transition-all duration-300"
       >
@@ -271,7 +256,7 @@ export default function NavigationWalletButton() {
                     <li>Click &quot;+&quot; → &quot;Connect to EVM chains&quot;</li>
                     <li>Add custom network: ID 1301, RPC https://sepolia.unichain.org</li>
                   </ol>
-                  <button onClick={connectLeapWallet} className="mt-1 text-blue-600 hover:underline">Try Again</button>
+                  <button onClick={handleConnectWallet} className="mt-1 text-blue-600 hover:underline">Try Again</button>
                 </div>
               )}
             </div>

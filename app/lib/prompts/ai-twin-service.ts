@@ -4,7 +4,7 @@
  * This file contains functions for generating AI twin responses using the LLM API.
  */
 
-import { sendAgentPrompt } from '../verida-llm-service';
+import { sendAgentPrompt } from '../twin-inference-service';
 import { generateAiTwinPrompt } from './ai-twin-prompts';
 import { Message } from '../../types/chat';
 import { extractAiTwinResponse } from '../ai-twin-chat-service';
