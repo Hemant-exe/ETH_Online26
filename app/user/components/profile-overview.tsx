@@ -19,7 +19,7 @@ import {
   AlertTriangleIcon,
   Hexagon,
 } from "lucide-react"
-import { useVeridaClient, useProfileRestService } from "@/app/lib/clientside-verida"
+import { useAccountSession, useProfileRepository } from "@/app/lib/account/hooks"
 
 export default function ProfileOverview() {
   const [activeTab, setActiveTab] = useState("overview")
@@ -32,8 +32,8 @@ export default function ProfileOverview() {
   const [dataLoaded, setDataLoaded] = useState(false)
   
   // Get Verida client and profile service
-  const { client, isLoading: clientLoading, getDidId } = useVeridaClient()
-  const { service: profileRestService, isLoading: serviceLoading } = useProfileRestService()
+  const { client, isLoading: clientLoading, getDidId } = useAccountSession()
+  const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
   useEffect(() => {
     setMounted(true)

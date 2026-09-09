@@ -8,11 +8,11 @@ import { useMediaQuery } from "@/hooks/use-media-query"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { mockConversations } from "@/data/mock-conversations"
-import { useVeridaClient } from "@/app/lib/clientside-verida"
+import { useAccountSession } from "@/app/lib/account/hooks"
 import { 
   getChatGroups, 
   getMessages, 
-  convertFromVeridaMessage,
+  convertFromStoredMessage,
   createChatGroup,
   createChatGroupId,
   createChatGroupName
@@ -26,7 +26,7 @@ export default function ChatInterface() {
   const isMobile = useMediaQuery("(max-width: 768px)")
   const [showChatList, setShowChatList] = useState(!isMobile)
   const [isLoading, setIsLoading] = useState(false)
-  const { client, isLoading: veridaLoading, getDidId } = useVeridaClient()
+  const { client, isLoading: veridaLoading, getDidId } = useAccountSession()
   const [userDid, setUserDid] = useState<string | null>(null)
   const hasInitializedRef = useRef(false)
   const isLoadingMessagesRef = useRef(false)
@@ -99,7 +99,7 @@ export default function ChatInterface() {
           // For the last message, extract the fromName if available
           let lastMessage = null;
           if (group.lastMessage) {
-            lastMessage = convertFromVeridaMessage(group.lastMessage, userDid || "");
+            lastMessage = convertFromStoredMessage(group.lastMessage, userDid || "");
             
             // If we have message dictionary, try to extract the sender name
             if (typeof group.lastMessage.messageText === 'string' && group.lastMessage.isMessageDict) {
@@ -190,7 +190,7 @@ export default function ChatInterface() {
       if (messages.length > 0) {
         // Convert to app format
         const formattedMessages = messages.map(msg => {
-          const converted = convertFromVeridaMessage(msg, userDid || "");
+          const converted = convertFromStoredMessage(msg, userDid || "");
           return converted;
         });
         

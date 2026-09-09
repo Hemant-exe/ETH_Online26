@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import ProfileNFTABI from "@/abi/ProfileNFT.json";
-import { getLeapProvider } from "@/utils/wallet";
+import { getEvmProvider } from "@/utils/wallet";
 
 // Contract address on Unichain Sepolia
 // This is the official deployed contract address
@@ -29,7 +29,7 @@ export class Web3ProfileNFTService implements ProfileNFTService {
   private async initialize() {
     try {
       // Get the provider from Leap wallet
-      const ethereumProvider = getLeapProvider();
+      const ethereumProvider = getEvmProvider();
       
       if (!ethereumProvider) {
         throw new Error("No Ethereum provider available");

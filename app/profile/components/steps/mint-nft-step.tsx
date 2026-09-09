@@ -20,7 +20,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 import { nftService } from "@/app/services/nft-service"
 import { profileMetadataService } from "@/app/services/profile-metadata-service"
-import { updateDidWithNFT } from "@/app/lib/cheqd-service"
+import { accountSession } from "@/app/lib/account/session"
+import { getTwinAgentId } from "@/app/lib/twin-profile-service"
 import { checkExistingNFT } from "@/app/utils/nft-check"
 
 interface MintNFTStepProps {
@@ -100,7 +101,10 @@ export default function MintNFTStep({ profileData, didId, onMintSuccess, onEdit 
       setMintingStage("metadata")
 
       // Step 2: Generate and store metadata (25%-50%)
-      const metadata = profileMetadataService.generateMetadata(profileData, didId)
+      const metadata = profileMetadataService.generateMetadata(profileData, didId, {
+        humanAnchor: accountSession.getHumanAnchor(),
+        agentId: await getTwinAgentId().catch(() => null),
+      })
       const tokenURI = await profileMetadataService.storeMetadata(metadata)
       
       await new Promise<void>((resolve) => {
@@ -124,45 +128,23 @@ export default function MintNFTStep({ profileData, didId, onMintSuccess, onEdit 
         txHash = mintResult.txHash
       }
       
-      // Get Cheqd wallet data from localStorage
-      const cheqdWalletData = JSON.parse(localStorage.getItem("cheqdWalletData") || "{}")
-      const cheqdDid = localStorage.getItem("cheqdWalletAddress")
-      
-      // Update Cheqd DID with NFT information if available
-      if (cheqdWalletData && cheqdWalletData.keypair && cheqdDid) {
-        try {
-          // Get the Verida DID from localStorage (preferred) or use the one passed as prop
-          const veridaDID = localStorage.getItem("veridaDID") || didId;
-          
-          console.log("Using Verida DID for Cheqd update:", veridaDID);
-          
-          // Update the Cheqd DID document with NFT information
-          await updateDidWithNFT(cheqdDid, cheqdWalletData.keypair.publicKeyHex, {
-            tokenId,
-            transactionHash: txHash,
-            contractAddress: nftService.getContractAddress(),
-            chainId: "1301", // Unichain Sepolia
-            chainName: "Unichain Sepolia"
-          }, veridaDID);
-          
-          // Save NFT data in localStorage for access across the app
-          localStorage.setItem("nftData", JSON.stringify({
-            tokenId,
-            transactionHash: txHash,
-            contractAddress: nftService.getContractAddress(),
-            mintDate: new Date().toISOString(),
-            chainId: "1301",
-            chainName: "Unichain Sepolia",
-            veridaDID: veridaDID
-          }));
-          
-          console.log("Successfully updated Cheqd DID with NFT information and linked Verida DID")
-        } catch (cheqdError) {
-          console.error("Error updating Cheqd DID with NFT data:", cheqdError)
-          // Continue with the flow even if Cheqd update fails
-        }
-      }
-      
+      // Record the mint locally so the rest of the app can show it.
+      //
+      // This replaces a Cheqd DID-document update that wrote the token
+      // details into an off-chain DID doc. The token itself is now the
+      // record: its metadata already carries the human anchor and agent id,
+      // so there is no second document to keep in sync.
+      localStorage.setItem("nftData", JSON.stringify({
+        tokenId,
+        transactionHash: txHash,
+        contractAddress: nftService.getContractAddress(),
+        mintDate: new Date().toISOString(),
+        chainId: "1301",
+        chainName: "Unichain Sepolia",
+        accountId: didId,
+        humanAnchor: accountSession.getHumanAnchor(),
+      }))
+
       await new Promise<void>((resolve) => {
         let progress = 50
         const interval = setInterval(() => {
@@ -335,7 +317,7 @@ export default function MintNFTStep({ profileData, didId, onMintSuccess, onEdit 
           Mint Your Profile as an NFT
         </CardTitle>
         <CardDescription className="text-sm mt-1">
-          Review your profile and create your NFT on the Cheqd protocol
+          Review your profile and mint it as an NFT on Unichain Sepolia
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 px-3 relative" ref={containerRef}>
@@ -350,7 +332,7 @@ export default function MintNFTStep({ profileData, didId, onMintSuccess, onEdit 
           <InfoIcon className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-xs text-muted-foreground">
-              Once minted, your profile becomes tamper-proof on the Cheqd protocol. You'll own your profile as an NFT in
+              Once minted, your profile becomes tamper-proof on Unichain Sepolia. You'll own your profile as an NFT in
               your wallet. Sensitive data is stored securely off-chain via Verida.
             </p>
           </div>
@@ -510,7 +492,7 @@ export default function MintNFTStep({ profileData, didId, onMintSuccess, onEdit 
                       <div className="mt-auto flex justify-between items-end">
                         <div className="bg-white/10 backdrop-blur-sm rounded-lg px-1.5 py-0.5 flex items-center gap-1">
                           <Shield className="h-2.5 w-2.5 text-white/80" />
-                          <span className="text-white/90 text-[9px]">Secured by Cheqd</span>
+                          <span className="text-white/90 text-[9px]">Verified Human</span>
                         </div>
 
                         <div className="bg-white/10 backdrop-blur-sm rounded-lg px-1.5 py-0.5">
@@ -698,7 +680,7 @@ export default function MintNFTStep({ profileData, didId, onMintSuccess, onEdit 
                 {[
                   { stage: "preparing", label: "Preparing Data", icon: "📋" },
                   { stage: "metadata", label: "Creating Metadata", icon: "🔗" },
-                  { stage: "minting", label: "Minting on Cheqd", icon: "🔨" },
+                  { stage: "minting", label: "Minting on Unichain", icon: "🔨" },
                   { stage: "finalizing", label: "Finalizing", icon: "✨" },
                 ].map((step, index) => (
                   <div

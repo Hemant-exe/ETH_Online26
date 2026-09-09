@@ -6,7 +6,7 @@ import { Shield, ArrowRight, Heart, UserCircle, Lock, Fingerprint, HeartPulse, F
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { checkNFTAndRedirect } from "@/utils/nft-check"
-import { formatAddress, connectLeap, disconnectLeap, isLeapWalletInstalled } from "@/utils/wallet"
+import { formatAddress, connectWallet, disconnectWallet, isWalletAvailable } from "@/utils/wallet"
 
 interface HeroSectionProps {
   sectionRef: (el: HTMLElement | null) => void
@@ -26,13 +26,13 @@ export default function HeroSection({ sectionRef }: HeroSectionProps) {
   const handleConnectWallet = async () => {
     setIsConnecting(true);
     try {
-      if (!isLeapWalletInstalled()) {
+      if (!isWalletAvailable()) {
         window.open("https://www.leapwallet.io/", "_blank");
         alert("Please install Leap wallet and reload the page");
         return;
       }
       
-      const address = await connectLeap();
+      const address = await connectWallet();
       if (address) {
         setIsConnected(true);
         setWalletAddress(address);
@@ -49,7 +49,7 @@ export default function HeroSection({ sectionRef }: HeroSectionProps) {
   // Handle wallet disconnection
   const handleDisconnectWallet = async () => {
     try {
-      await disconnectLeap();
+      await disconnectWallet();
       setIsConnected(false);
       setWalletAddress("");
       localStorage.removeItem("walletAddress");

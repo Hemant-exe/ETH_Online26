@@ -5,7 +5,7 @@
  * Provides specialized prompts and formatting for different types of interactions
  */
 
-import { sendAgentPrompt, AgentPromptRequest } from './verida-llm-service';
+import { sendAgentPrompt, AgentPromptRequest } from './twin-inference-service';
 import { 
   generateSuggestionPrompt, 
   generateConversationStarterPrompt,
@@ -110,20 +110,21 @@ export async function generateAiTwinChatResponse(request: AiTwinChatRequest): Pr
     // Use the agent prompt endpoint for better context awareness
     const response = await sendAgentPrompt({
       prompt,
-      temperature: request.temperature || 0.7
+      // A twin's reply should read as quick and natural, so keep reasoning
+      // shallow. Deep deliberation makes the voice stilted and costs more per
+      // paid call.
+      effort: 'low',
     });
 
     // Extract the response text from the API response
     let responseText = '';
     
-    if (response && response.response && response.response.output) {
+    if (response?.response?.output) {
       responseText = response.response.output;
-    } else if (response && response.result && response.result.content) {
-      responseText = response.result.content;
-    } else if (response && response.result && response.result.choices && response.result.choices.length > 0) {
-      responseText = response.result.choices[0].message.content;
+    } else if (response?.text) {
+      responseText = response.text;
     } else {
-      throw new Error('Could not extract response from LLM API result');
+      throw new Error('Twin inference returned no text');
     }
 
     // Clean up the response

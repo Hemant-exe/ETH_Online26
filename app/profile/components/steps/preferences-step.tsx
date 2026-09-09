@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
-import { useVeridaClient, useProfileRestService } from "@/app/lib/clientside-verida"
+import { useAccountSession, useProfileRepository } from "@/app/lib/account/hooks"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface PreferencesStepProps {
@@ -46,8 +46,8 @@ export default function PreferencesStep({ profileData, updateProfileData, onCont
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const [isLoadingPreferences, setIsLoadingPreferences] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  const { client } = useVeridaClient()
-  const { service: profileRestService, isLoading: serviceLoading } = useProfileRestService()
+  const { client } = useAccountSession()
+  const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
   // Fetch existing preferences when component mounts
   useEffect(() => {

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import IntroStep from "./steps/intro-step"
-import CreateDIDStep from "./steps/create-did-step"
+import VerifyHumanStep from "./steps/verify-human-step"
 import BasicInfoStep from "./steps/basic-info-step"
 import PhotosStep from "./steps/photos-step"
 import PreferencesStep from "./steps/preferences-step"
@@ -11,7 +11,7 @@ import MintNFTStep from "./steps/mint-nft-step"
 import SuccessStep from "./steps/success-step"
 import ProgressBar from "./progress-bar"
 
-export type ProfileStep = "intro" | "create-did" | "basic-info" | "photos" | "preferences" | "mint-nft" | "success"
+export type ProfileStep = "intro" | "verify-human" | "basic-info" | "photos" | "preferences" | "mint-nft" | "success"
 
 export interface ProfileData {
   displayName: string
@@ -23,6 +23,7 @@ export interface ProfileData {
   relationshipGoals: string
   primaryPhotoIndex: number
   did?: string
+  humanAnchor?: string
   photoDataArray?: any[]
   _id?: string
   _rev?: string
@@ -48,8 +49,8 @@ export default function ProfileCreationFlow() {
     setCurrentStep(step)
   }
 
-  const handleDidCreated = (did: string) => {
-    setDidId(did)
+  const handleVerified = (accountId: string) => {
+    setDidId(accountId)
     goToNextStep("basic-info")
   }
 
@@ -66,9 +67,9 @@ export default function ProfileCreationFlow() {
   const renderCurrentStep = () => {
     switch (currentStep) {
       case "intro":
-        return <IntroStep onContinue={() => goToNextStep("create-did")} />
-      case "create-did":
-        return <CreateDIDStep onDidCreated={handleDidCreated} />
+        return <IntroStep onContinue={() => goToNextStep("verify-human")} />
+      case "verify-human":
+        return <VerifyHumanStep onVerified={handleVerified} />
       case "basic-info":
         return (
           <BasicInfoStep
@@ -112,12 +113,12 @@ export default function ProfileCreationFlow() {
           />
         )
       default:
-        return <IntroStep onContinue={() => goToNextStep("create-did")} />
+        return <IntroStep onContinue={() => goToNextStep("verify-human")} />
     }
   }
 
   const getStepNumber = () => {
-    const steps: ProfileStep[] = ["intro", "create-did", "basic-info", "photos", "preferences", "mint-nft", "success"]
+    const steps: ProfileStep[] = ["intro", "verify-human", "basic-info", "photos", "preferences", "mint-nft", "success"]
     return steps.indexOf(currentStep) + 1
   }
 

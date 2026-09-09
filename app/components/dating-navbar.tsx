@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import { Heart, MessageCircle, Sparkles, User, Settings, Bell, Search, ChevronDown, LogOut, Bot } from "lucide-react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
-import { useVeridaClient, useProfileRestService } from "@/app/lib/clientside-verida"
+import { useAccountSession, useProfileRepository } from "@/app/lib/account/hooks"
 
 export default function DatingNavbar() {
   const pathname = usePathname()
@@ -24,8 +24,8 @@ export default function DatingNavbar() {
   const [dataLoaded, setDataLoaded] = useState(false)
   
   // Get Verida client and profile service
-  const { client, isLoading: clientLoading, getDidId } = useVeridaClient()
-  const { service: profileRestService, isLoading: serviceLoading } = useProfileRestService()
+  const { client, isLoading: clientLoading, getDidId } = useAccountSession()
+  const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
   // Load user data from Verida
   useEffect(() => {

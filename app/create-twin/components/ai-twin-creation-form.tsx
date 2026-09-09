@@ -11,8 +11,10 @@ import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useVeridaClient } from "../../lib/clientside-verida"
-import { formatAiTwinData, saveAiTwin } from "../../lib/verida-ai-twin-service"
+import { useAccountSession } from "../../lib/account/hooks"
+import { formatAiTwinData, saveAiTwin } from "../../lib/twin-profile-service"
+import { registerTwinAsAgent } from "../../lib/identity/agent-identity-service"
+import { accountSession } from "../../lib/account/session"
 import { HeartLoader } from "@/components/ui/heart-loader"
 import {
   User,
@@ -76,7 +78,7 @@ export default function AiTwinCreationForm({
   const [newSituation, setNewSituation] = useState("")
   const [newResponse, setNewResponse] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { client, getAuthStatus, getDidId } = useVeridaClient()
+  const { client, getAuthStatus, getDidId } = useAccountSession()
 
   const handleAddTag = (field: string, e?: React.FormEvent) => {
     e?.preventDefault()
@@ -130,47 +132,55 @@ export default function AiTwinCreationForm({
     try {
       setIsSubmitting(true)
       
-      // Check if we're connected to Verida
+      // Ensure a session exists before writing anything.
       const isAuthenticated = await getAuthStatus()
       if (!isAuthenticated) {
-        // Connect if not already connected
         if (client) {
           await client.connect()
         } else {
-          throw new Error('Verida client not available')
+          await accountSession.connect()
         }
       }
-      
-      // Get current DID
+
       const did = await getDidId()
-      
-      // Format AI twin data according to Verida favorite schema
-      const veridaData = formatAiTwinData(formData)
-      
-      // Add the DID if available
+
+      const twinRecord = formatAiTwinData(formData)
       if (did) {
-        veridaData.did = did
+        twinRecord.did = did
       }
-      
-      // Check if this is an update of an existing twin (if URI and _id exist)
+
       const isUpdate = !!(formData.uri && formData._id)
-      
-      // Log the formatted data for debugging
-      console.log(`${isUpdate ? "Updating" : "Creating"} Verida Data:`, veridaData)
-      
-      // Save the data to Verida
-      const savedData = await saveAiTwin(veridaData)
-      
-      // Display success toast
+      const savedData = await saveAiTwin(twinRecord)
+
+      // Register the twin as a human-backed agent in AgentBook.
+      //
+      // This is what lets the twin take part in a screening conversation:
+      // the other side resolves this agent id and refuses to talk to
+      // anything that is not backed by a verified human. It runs after the
+      // save so a registration failure never costs the user their twin.
+      let agentNote = ""
+      if (accountSession.isVerifiedHuman()) {
+        try {
+          const agent = await registerTwinAsAgent(null, { name: twinRecord.name })
+          agentNote = agent.registeredInAgentBook
+            ? " Registered in AgentBook as a human-backed agent."
+            : " Saved locally; AgentBook registration is pending."
+        } catch (agentError) {
+          console.warn("Agent registration failed:", agentError)
+          agentNote = " Agent registration did not complete — you can retry from Identity settings."
+        }
+      } else {
+        agentNote = " Verify with Selfie Check to register your twin as an agent."
+      }
+
       toast({
         title: isUpdate ? "AI Twin Updated!" : "AI Twin Created!",
-        description: isUpdate 
-          ? "Your AI twin has been successfully updated in your Verida wallet." 
-          : "Your AI twin has been successfully created and saved to your Verida wallet.",
+        description:
+          (isUpdate
+            ? "Your AI twin has been updated."
+            : "Your AI twin has been created and saved to this device.") + agentNote,
         variant: "default",
       })
-      
-      console.log("Saved AI Twin data:", savedData)
 
       if (onSaveSuccess) {
         onSaveSuccess()

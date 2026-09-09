@@ -16,7 +16,7 @@ import {
   HistoryIcon,
 } from "lucide-react"
 import EditProfileModal from "./edit-profile-modal"
-import { useVeridaClient, useProfileRestService } from "@/app/lib/clientside-verida"
+import { useAccountSession, useProfileRepository } from "@/app/lib/account/hooks"
 
 // Default profile data structure
 const defaultProfileData = {
@@ -40,8 +40,8 @@ export default function ProfileSnapshot() {
   const [isLoading, setIsLoading] = useState(true)
   
   // Get Verida client and profile service
-  const { client, isLoading: clientLoading, getDidId } = useVeridaClient()
-  const { service: profileRestService, isLoading: serviceLoading } = useProfileRestService()
+  const { client, isLoading: clientLoading, getDidId } = useAccountSession()
+  const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
   // Load user data from Verida
   useEffect(() => {

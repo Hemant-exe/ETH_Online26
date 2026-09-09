@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import type { Conversation } from "@/app/types/chat"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
-import { useVeridaClient } from "@/app/lib/clientside-verida"
+import { useAccountSession } from "@/app/lib/account/hooks"
 import { toast } from "@/hooks/use-toast"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -31,7 +31,7 @@ export default function ChatList({
 }: ChatListProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isConnecting, setIsConnecting] = useState(false)
-  const { client, isLoading: veridaLoading } = useVeridaClient()
+  const { client, isLoading: veridaLoading } = useAccountSession()
 
   const filteredConversations = conversations.filter((conversation) =>
     conversation.user.name.toLowerCase().includes(searchQuery.toLowerCase()),

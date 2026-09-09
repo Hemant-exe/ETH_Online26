@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { InfoIcon, Hexagon } from "lucide-react"
 import { motion } from "framer-motion"
-import { useVeridaClient, useProfileRestService } from "@/app/lib/clientside-verida"
+import { useAccountSession, useProfileRepository } from "@/app/lib/account/hooks"
 
 type ProfileData = {
   name: string
@@ -39,8 +39,8 @@ export default function EditProfileModal({ isOpen, onClose, profile }: EditProfi
   const [dataLoaded, setDataLoaded] = useState(false)
   
   // Get Verida client and profile service
-  const { client, isLoading: clientLoading, getDidId } = useVeridaClient()
-  const { service: profileRestService, isLoading: serviceLoading } = useProfileRestService()
+  const { client, isLoading: clientLoading, getDidId } = useAccountSession()
+  const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
   // Load user data from Verida
   useEffect(() => {
