@@ -28,29 +28,29 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
   const { client, isLoading, error: clientError } = useAccountSession();
   const { service: profileRestService, isLoading: isRestLoading, error: restError } = useProfileRepository();
   
-  // Initialize Verida client if needed
+  // Initialize account session if needed
   useEffect(() => {
-    const initializeVeridaClient = async () => {
+    const initializeSession = async () => {
       try {
         if (!accountSession.getClient()) {
-          console.log("Initializing Verida client...");
+          console.log("Initializing account session...");
           await accountSession.init();
           setClientInitialized(true);
-          console.log("Verida client initialized.");
+          console.log("account session initialized.");
         } else {
           setClientInitialized(true);
-          console.log("Verida client already initialized.");
+          console.log("account session already initialized.");
         }
       } catch (err) {
-        console.error("Error initializing Verida client:", err);
-        setError("Failed to initialize Verida client. Please try again.");
+        console.error("Error initializing account session:", err);
+        setError("Failed to initialize account session. Please try again.");
       }
     };
     
-    initializeVeridaClient();
+    initializeSession();
   }, []);
   
-  // Check if there's existing profile data in Verida
+  // Check if there's existing profile data in local storage
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
@@ -76,7 +76,7 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
           console.log("Profile data retrieved:", profile);
           
           if (profile) {
-            // Update the form with data from Verida
+            // Update the form with data from local storage
             updateProfileData({
               displayName: profile.displayName || profileData.displayName,
               age: profile.age || profileData.age,
@@ -91,13 +91,13 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
             
             // toast({
             //   title: "Profile Data Retrieved",
-            //   description: "Loaded your existing profile data from Verida.",
+            //   description: "Loaded your existing profile data from local storage.",
             //   duration: 3000,
             // });
           }
         }
       } catch (error) {
-        console.error("Error loading profile data from Verida REST API:", error);
+        console.error("Error loading profile data from local storage REST API:", error);
         
         // SDK fallback approach has been removed to avoid blocking progression to next steps
       }
@@ -134,13 +134,13 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
     try {
       // Make sure client is initialized
       if (!accountSession.getClient()) {
-        console.log("Initializing Verida client...");
+        console.log("Initializing account session...");
         await accountSession.init();
       }
       
-      // Ensure we're connected to Verida to get DID
+      // Ensure we're connected to local storage to get DID
       if (!accountSession.isConnected()) {
-        console.log("Connecting to Verida...");
+        console.log("Connecting to local storage...");
         const connected = await accountSession.connect();
         if (connected) {
           const did = accountSession.getDid() || "unknown";
@@ -179,7 +179,7 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
           <p className="text-sm text-indigo-700 flex items-start">
             <LockIcon className="h-4 w-4 text-indigo-600 mr-2 mt-0.5" />
             <span>
-              Your profile data will be stored in your personal encrypted Verida database that only you control.
+              Your profile data will be stored in your personal encrypted stored database that only you control.
               Required fields are marked with an asterisk (*).
             </span>
           </p>
@@ -189,7 +189,7 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
           <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800">
             <AlertCircleIcon className="h-4 w-4 text-red-600" />
             <AlertDescription>
-              {clientError && `Verida client error: ${clientError.message}. `}
+              {clientError && `account session error: ${clientError.message}. `}
               {restError && `REST API error: ${restError.message}. `}
               Please refresh and try again.
             </AlertDescription>
@@ -245,7 +245,7 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
                 </Label>
                 <span className="flex items-center text-xs text-indigo-600">
                   <LockIcon className="h-3 w-3 mr-1" />
-                  Stored securely in Verida
+                  Stored securely in local storage
                 </span>
               </div>
               <div className="flex items-center space-x-4">
@@ -347,7 +347,7 @@ export default function BasicInfoStep({ profileData, updateProfileData, onContin
           {isSaving ? (
             <div className="flex items-center justify-center">
               <LoaderIcon className="h-4 w-4 animate-spin mr-2" />
-              <span>Saving to Verida...</span>
+              <span>Saving to local storage...</span>
             </div>
           ) : isLoading || isRestLoading ? (
             <div className="flex items-center justify-center">

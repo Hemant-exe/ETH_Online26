@@ -116,13 +116,13 @@ export default function LandingPage() {
   // Define sponsors for Partners section
   const sponsors = [
     {
-      name: "Cheqd",
+      name: "World",
       logo: "/placeholder.svg?height=60&width=120",
       tagline: "Ensuring blockchain integrity.",
       letter: "C",
     },
     {
-      name: "Verida",
+      name: "Hedera",
       logo: "/placeholder.svg?height=60&width=120",
       tagline: "Empowering decentralized identities.",
       letter: "V",
@@ -145,7 +145,7 @@ export default function LandingPage() {
     {
       title: "Decentralized Identity",
       icon: <Fingerprint className="h-6 w-6 text-[#EC4899]" />,
-      description: "Powered by Verida, your identity remains secure, private, and fully under your control.",
+      description: "World ID proves you are a unique human without revealing who you are. Your profile never leaves your device.",
       details: [
         "Self-sovereign identity",
         "Selective disclosure of information",
@@ -182,7 +182,7 @@ export default function LandingPage() {
     {
       step: 1,
       title: "Connect Your Wallets",
-      description: "Link your Verida and Cheqd wallets to establish your secure, decentralized identity.",
+      description: "Pass Selfie Check once. One verified human gets exactly one profile — no duplicates, no catfish.",
       icon: <Wallet className="h-5 w-5 text-white" />,
     },
     {
@@ -194,7 +194,7 @@ export default function LandingPage() {
     {
       step: 3,
       title: "Verify Your Identity",
-      description: "Complete verification through Verida and Cheqd's decentralized identity framework.",
+      description: "Your AI twin registers in AgentBook, so anyone it talks to can confirm a real person stands behind it.",
       icon: <Key className="h-5 w-5 text-white" />,
     },
     {
@@ -507,9 +507,9 @@ export default function LandingPage() {
             <div className="space-y-4">
               <Link href="/" className="flex items-center space-x-2">
                 <div className="relative w-12 h-12">
-                  <img src="/logo2.svg" alt="VeraLove Logo" className="w-full h-full" />
+                  <img src="/logo2.svg" alt="Proof of Heart logo" className="w-full h-full" />
                 </div>
-                <span className="font-bold text-xl tracking-tight text-[#1F2937]">VeraLove</span>
+                <span className="font-bold text-xl tracking-tight text-[#1F2937]">Proof of Heart</span>
               </Link>
               <p className="text-sm text-[#6B7280]">
                 Pioneering the future of decentralized dating with blockchain security and AI innovation.
@@ -549,7 +549,7 @@ export default function LandingPage() {
           <div className="mt-12 pt-8 border-t border-[#E5E7EB]">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-sm text-[#6B7280]">
-                © {new Date().getFullYear()} VeraLove. All rights reserved.
+                © {new Date().getFullYear()} Proof of Heart. All rights reserved.
               </p>
               {/* <div className="flex gap-6">
                 <Link href="/privacy" className="text-sm text-[#6B7280] hover:text-[#EC4899] transition-colors">
@@ -565,7 +565,7 @@ export default function LandingPage() {
             </div>
             <div className="mt-4 text-left">
               <p className="text-sm text-[#6B7280]">
-              © Made for <a href="https://dorahacks.io/hackathon/cheqd-verifiable-ai" className="text-[#EC4899] hover:underline">Verifiable Hackathon dorahacks@2025</a>
+              © Built for <a href="https://ethglobal.com/events/ethonline2026" className="text-[#EC4899] hover:underline">ETHOnline 2026</a>
               </p>
             </div>
           </div>

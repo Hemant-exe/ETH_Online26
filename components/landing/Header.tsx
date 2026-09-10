@@ -30,9 +30,9 @@ export default function Header({ activeSection, scrollY, navItems }: HeaderProps
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-2">
               <div className="relative w-10 h-10">
-                <img src="/logo2.svg" alt="VeraLove Logo" className="w-full h-full" />
+                <img src="/logo2.svg" alt="Proof of Heart logo" className="w-full h-full" />
               </div>
-              <span className="font-bold text-xl tracking-tight text-[#1F2937]">VeraLove</span>
+              <span className="font-bold text-xl tracking-tight text-[#1F2937]">Proof of Heart</span>
             </Link>
 
             <nav className="hidden md:flex items-center space-x-6">

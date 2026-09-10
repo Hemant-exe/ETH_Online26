@@ -31,7 +31,7 @@ export default function ChatList({
 }: ChatListProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isConnecting, setIsConnecting] = useState(false)
-  const { client, isLoading: veridaLoading } = useAccountSession()
+  const { client, isLoading: sessionLoading } = useAccountSession()
 
   const filteredConversations = conversations.filter((conversation) =>
     conversation.user.name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -46,8 +46,8 @@ export default function ChatList({
         await client.connect();
         
         toast({
-          title: "Connected to Verida",
-          description: "Successfully connected to your Verida wallet.",
+          title: "Connected to local storage",
+          description: "Your account is ready.",
         });
         
         // If there's a refresh callback, call it to reload conversations
@@ -56,8 +56,8 @@ export default function ChatList({
         }
       } else {
         toast({
-          title: "Verida Client Not Available",
-          description: "The Verida client is not initialized.",
+          title: "Account Session Unavailable",
+          description: "The account session is not initialized.",
           variant: "destructive",
         });
       }
@@ -65,7 +65,7 @@ export default function ChatList({
       console.error("Failed to connect:", error);
       toast({
         title: "Connection Error",
-        description: "An error occurred while connecting to Verida.",
+        description: "An error occurred while connecting to local storage.",
         variant: "destructive",
       });
     } finally {

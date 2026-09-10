@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import ProfileSnapshot from "./profile-snapshot"
 import NftDetails from "./nft-details"
-import DidSettings from "./did-settings"
+import IdentitySettings from "./identity-settings"
 import OffChainData from "./off-chain-data"
 import SecurityControls from "./security-controls"
 import ActivityLog from "./activity-log"
@@ -31,7 +31,7 @@ export default function ProfileOverview() {
   })
   const [dataLoaded, setDataLoaded] = useState(false)
   
-  // Get Verida client and profile service
+  // Get account session and profile service
   const { client, isLoading: clientLoading, getDidId } = useAccountSession()
   const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
@@ -39,7 +39,7 @@ export default function ProfileOverview() {
     setMounted(true)
   }, [])
 
-  // Load user data from Verida
+  // Load user data from local storage
   useEffect(() => {
     const loadUserData = async () => {
       // Skip if already loaded or dependencies are still loading
@@ -48,22 +48,22 @@ export default function ProfileOverview() {
       }
       
       try {
-        // Get DID from localStorage
-        let did = localStorage.getItem("veridaDID") || ""
+        // Resolve the account id for this profile
+        let did = localStorage.getItem("accountId") || ""
         
         if (!did && client) {
           try {
             did = await getDidId() || ""
             if (did) {
-              localStorage.setItem("veridaDID", did)
+              localStorage.setItem("accountId", did)
             }
           } catch (error) {
-            console.error("Error getting DID:", error)
+            console.error("Error resolving account id:", error)
           }
         }
         
         if (did) {
-          // Load profile data from Verida
+          // Load profile data from local storage
           try {
             const profile = await profileRestService.getProfile(did)
             console.log("Loaded profile data for overview:", profile)
@@ -99,7 +99,7 @@ export default function ProfileOverview() {
   const tabs = [
     { id: "overview", label: "Overview", icon: UserIcon },
     { id: "nft", label: "NFT Details", icon: KeyIcon },
-    { id: "did", label: "DID", icon: ShieldIcon },
+    { id: "did", label: "Identity", icon: ShieldIcon },
     { id: "offchain", label: "Off-Chain", icon: ImageIcon },
     { id: "security", label: "Privacy", icon: LockIcon },
     { id: "activity", label: "Activity", icon: HistoryIcon },
@@ -159,7 +159,7 @@ export default function ProfileOverview() {
         >
           {activeTab === "overview" && <ProfileSnapshot />}
           {activeTab === "nft" && <NftDetails />}
-          {activeTab === "did" && <DidSettings />}
+          {activeTab === "did" && <IdentitySettings />}
           {activeTab === "offchain" && <OffChainData />}
           {activeTab === "security" && <SecurityControls />}
           {activeTab === "activity" && <ActivityLog />}

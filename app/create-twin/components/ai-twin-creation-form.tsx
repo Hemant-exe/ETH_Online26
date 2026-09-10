@@ -339,13 +339,13 @@ export default function AiTwinCreationForm({
                     </div>
                   </div>
 
-                  {/* Verida Schema Required Fields - Hidden from user interface but still maintained in state */}
-                  {/* These fields are required for proper storage in Verida but don't need to be shown to users */}
+                  {/* Schema-required fields — kept in state, hidden from the form */}
+                  {/* These fields are required for proper storage in local storage but don't need to be shown to users */}
                   <div className="hidden">
                     <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-4 border border-indigo-100 mt-6">
                       <div className="flex gap-3 mb-4">
                         <Shield className="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
-                        <h3 className="font-medium text-indigo-700">Verida Storage Configuration</h3>
+                        <h3 className="font-medium text-indigo-700">Local Storage</h3>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -367,7 +367,7 @@ export default function AiTwinCreationForm({
                               <SelectItem value="share">Share</SelectItem>
                             </SelectContent>
                           </Select>
-                          <p className="text-xs text-slate-500">Required for Verida storage</p>
+                          <p className="text-xs text-slate-500">Stored on this device</p>
                         </div>
 
                         <div className="space-y-2">
@@ -388,7 +388,7 @@ export default function AiTwinCreationForm({
                               <SelectItem value="webpage">Webpage</SelectItem>
                             </SelectContent>
                           </Select>
-                          <p className="text-xs text-slate-500">Required for Verida storage</p>
+                          <p className="text-xs text-slate-500">Stored on this device</p>
                         </div>
 
                         <div className="space-y-2 md:col-span-2">
@@ -427,7 +427,7 @@ export default function AiTwinCreationForm({
                       <Shield className="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
                       <p className="text-sm text-indigo-700">
                         This deeply personal information helps your AI twin understand your background and experiences.
-                        All data is securely stored in your Verida wallet and never shared without your consent.
+                        All data stays on this device and is never shared without your consent.
                       </p>
                     </div>
                   </div>
@@ -1683,7 +1683,7 @@ export default function AiTwinCreationForm({
             <h4 className="font-medium text-indigo-700 text-lg mb-2">Security & Privacy</h4>
             <p className="text-indigo-600">
               Your AI twin will only access the information you've provided when needed to represent you.
-              All data is securely stored in your Verida wallet with end-to-end encryption.
+              All data stays on this device. Nothing is uploaded.
             </p>
           </div>
         </div>

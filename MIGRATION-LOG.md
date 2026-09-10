@@ -88,3 +88,75 @@ at the provider.** They belong to services being dropped, so revocation costs no
 Headline counts: 6 files are pure-legacy and get deleted outright; 4 service files keep
 their public signatures and get new internals; ~30 components need only identifier and
 copy changes.
+
+---
+
+## Phases 2–5 — the swap
+
+Committed as `a6ee64e`. Full rationale is in that commit message; the audit-relevant points:
+
+- **No build gated any deletion.** Node was never installed. Every file removed in these phases had
+  a complete replacement in place and every importer repointed first — verified by a static
+  import-resolution pass over all 200+ `.ts`/`.tsx` files (0 unresolved local imports) and a
+  `server-only`/`use client` boundary check (0 violations) — but not by `npm run build`. Treat all
+  of it as `UNVERIFIED-BY-BUILD`.
+- **`tsconfig.json` changed**, which the plan's scope discipline would normally forbid.
+  `moduleResolution` moved `node` → `bundler` and `target` `es5` → `ES2020`. Both are
+  prerequisites, not preferences: node10 resolution cannot see the `@x402/*` subpath exports
+  (`@x402/core/server`, `@x402/hedera/exact/client`), and an es5 target rejects `Map` iteration in
+  the storage adapter.
+- **`clientside-verida.tsx` shrank from ~400 lines to 2 hooks.** Of its 9 exports, only
+  `useVeridaClient` and `useProfileRestService` had callers. The other 7 —
+  `useProfileService`, `useProfileChanges`, `usePhotoChanges`, `useMessageNotifications`,
+  `useVeridaAuth`, `NoSSR`, `withNoSSR` — plus `VeridaAuthButton` were dead.
+- **Two pre-existing bugs fixed in passing.** `profileRestService.updateProfile()` was called by
+  `app/user/components/edit-profile-modal.tsx:105` but never implemented, so editing a profile from
+  the user page threw. And `createChatGroupId` hard-validated a `did:` prefix on both ids, which
+  would have rejected every new account key.
+
+## Phase 6 — twin-to-twin screening
+
+Uncommitted. `app/lib/twin-negotiation-service.ts`, `app/api/screening/route.ts`,
+`app/screening/[matchId]/page.tsx`, `app/explore/components/twin-screening-panel.tsx`,
+`app/lib/screening/`.
+
+Both agents are resolved through AgentBook and the run aborts before the first paid call if either
+is not human-backed. Turns alternate; each is an independent x402 settlement. The verdict is stored
+server-side because it gates who may message whom.
+
+## Phase 7 — purge
+
+Uncommitted. The plan's purge grep now returns **2 hits outside `migration/`**, both deliberate:
+
+```
+abi/ProfileNFT.json:262  "name": "veridaURI"
+abi/ProfileNFT.json:281  "name": "veridaURI"
+```
+
+This is the ABI of the **already-deployed** contract at `0x968Cd0A56cAc23332c846957064A99Eabbdc464E`.
+Renaming a parameter in it would make the checked-in ABI stop describing the bytecode on chain.
+Left as-is and documented in `README.md`.
+
+Also removed in this phase: a duplicate dead `app/components/landing/` tree (6 files, zero
+importers), `app/styles/verida-fonts.css` and its font assets (the `Sora` face was referenced by
+nothing), `src/font-mock.js`, and a 43-line dead CSS block in `globals.css` whose classes only
+served the deleted auth button.
+
+Pre-existing docs moved to `migration/legacy-docs/` rather than deleted — they describe the
+pre-event build, which is what this directory is for.
+
+## Phase 8 — submission artifacts
+
+Uncommitted. `README.md` rewritten with the before/after split and per-sponsor file:line tables.
+`FEEDBACK.md` written from friction encountered during integration.
+
+**Still outstanding for submission:**
+
+- [ ] `npm install` and `npm run build` — nothing here has been compiled
+- [ ] Confirm the Continuity Track on the ETHGlobal Hacker Dashboard
+- [ ] Obtain credentials (Hedera testnet, World Developer Portal + Sandbox + Selfie Check enablement, LLM key)
+- [ ] `npm run hedera:create-topic` and record the topic id
+- [ ] One real end-to-end paid request, with its HashScan link captured
+- [ ] Demo video, ≤ 5 minutes
+- [ ] Verify `@worldcoin/agentkit` and `@worldcoin/idkit` version pins in `package.json` — both were
+      guessed from documentation, not resolved against the registry

@@ -29,7 +29,7 @@ export default function ConnectButton() {
   }
 
   /* Connect wallet */
-  const connectWallet = async () => {
+  const handleConnectWallet = async () => {
     setIsConnecting(true)
     setError(null)
     setShowAccountCreationInfo(false)
@@ -100,7 +100,7 @@ export default function ConnectButton() {
   }
 
   /* Disconnect wallet */
-  const disconnectWallet = async () => {
+  const handleDisconnectWallet = async () => {
     try {
       // Call the disconnectWallet utility function
       if (isWalletAvailable()) {
@@ -168,7 +168,7 @@ export default function ConnectButton() {
     <div className="flex flex-col items-center">
       {walletAddress ? (
         <Button 
-          onClick={disconnectWallet} 
+          onClick={handleDisconnectWallet} 
           className="bg-gradient-to-r from-[#6D28D9] to-[#EC4899] text-white hover:opacity-90 group relative overflow-hidden transition-all duration-300"
         >
           <span className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-10 transition-opacity"></span>
@@ -180,7 +180,7 @@ export default function ConnectButton() {
         </Button>
       ) : (
         <Button 
-          onClick={connectWallet} 
+          onClick={handleConnectWallet} 
           disabled={isConnecting} 
           className="relative group overflow-hidden px-8 py-4 h-auto bg-gradient-to-r from-[#6D28D9] to-[#EC4899] text-white hover:shadow-lg transition-all duration-300"
         >
@@ -266,7 +266,7 @@ export default function ConnectButton() {
                   <ExternalLink className="ml-1 h-3 w-3" />
                 </a>
                 <button
-                  onClick={connectWallet}
+                  onClick={handleConnectWallet}
                   className="inline-flex items-center text-xs text-[#6D28D9] hover:underline"
                 >
                   Try Again

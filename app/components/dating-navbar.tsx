@@ -23,11 +23,11 @@ export default function DatingNavbar() {
   const [isLoading, setIsLoading] = useState(true)
   const [dataLoaded, setDataLoaded] = useState(false)
   
-  // Get Verida client and profile service
+  // Get account session and profile service
   const { client, isLoading: clientLoading, getDidId } = useAccountSession()
   const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
-  // Load user data from Verida
+  // Load user data from local storage
   useEffect(() => {
     const loadUserData = async () => {
       // Skip if already loaded or dependencies are still loading
@@ -39,13 +39,13 @@ export default function DatingNavbar() {
         setIsLoading(true)
         
         // Get DID from client or localStorage
-        let did = localStorage.getItem("veridaDID") || ""
+        let did = localStorage.getItem("accountId") || ""
         
         if (!did && client) {
           try {
             did = await getDidId() || ""
             if (did) {
-              localStorage.setItem("veridaDID", did)
+              localStorage.setItem("accountId", did)
             }
           } catch (error) {
             console.error("Error getting DID:", error)
@@ -53,7 +53,7 @@ export default function DatingNavbar() {
         }
         
         if (did) {
-          // Load profile data from Verida
+          // Load profile data from local storage
           try {
             const profile = await profileRestService.getProfile(did)
             console.log("Loaded profile data for navbar:", profile)
@@ -186,7 +186,7 @@ export default function DatingNavbar() {
               <div className="relative h-10 w-10 mr-2">
                 <Image
                   src="/logo2.svg"
-                  alt="VeraLove Logo"
+                  alt="Proof of Heart logo"
                   width={40}
                   height={40}
                   className="h-10 w-10"
@@ -194,7 +194,7 @@ export default function DatingNavbar() {
               </div>
               <span className={`text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-rose-600 
                 ${isScrolled ? 'opacity-100' : 'opacity-100'}`}>
-                VeraLove
+                Proof of Heart
               </span>
             </Link>
 
@@ -263,7 +263,7 @@ export default function DatingNavbar() {
                     >
                       <div className="px-4 py-2 border-b border-gray-100">
                         <p className="text-sm font-medium text-gray-900">{userData.name}</p>
-                        <p className="text-xs text-gray-500 truncate">Connected via Verida</p>
+                        <p className="text-xs text-gray-500 truncate">Local account</p>
                         {userData.did && (
                           <p className="text-xs text-gray-400 truncate">{userData.did.substring(0, 10)}...{userData.did.substring(userData.did.length - 4)}</p>
                         )}
@@ -363,7 +363,7 @@ export default function DatingNavbar() {
                 >
                   <div className="px-4 py-2 border-b border-gray-100">
                     <p className="text-sm font-medium text-gray-900">{userData.name}</p>
-                    <p className="text-xs text-gray-500 truncate">Connected via Verida</p>
+                    <p className="text-xs text-gray-500 truncate">Local account</p>
                     {userData.did && (
                       <p className="text-xs text-gray-400 truncate">{userData.did.substring(0, 8)}...</p>
                     )}

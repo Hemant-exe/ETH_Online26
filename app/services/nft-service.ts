@@ -65,7 +65,7 @@ export class Web3ProfileNFTService implements ProfileNFTService {
   
   /**
    * Create a new profile NFT
-   * @param tokenURI - IPFS or Verida URI pointing to profile metadata
+   * @param tokenURI - Metadata URI for the profile
    */
   async createProfile(tokenURI: string): Promise<{ tokenId: string, txHash: string }> {
     try {
@@ -105,7 +105,7 @@ export class Web3ProfileNFTService implements ProfileNFTService {
   /**
    * Update an existing profile NFT
    * @param tokenId - ID of the profile NFT to update
-   * @param tokenURI - New IPFS or Verida URI pointing to updated profile metadata
+   * @param tokenURI - Updated metadata URI for the profile
    */
   async updateProfile(tokenId: string, tokenURI: string): Promise<{ txHash: string }> {
     try {

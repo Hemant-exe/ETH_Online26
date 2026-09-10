@@ -130,10 +130,9 @@ export default function MintNFTStep({ profileData, didId, onMintSuccess, onEdit 
       
       // Record the mint locally so the rest of the app can show it.
       //
-      // This replaces a Cheqd DID-document update that wrote the token
-      // details into an off-chain DID doc. The token itself is now the
-      // record: its metadata already carries the human anchor and agent id,
-      // so there is no second document to keep in sync.
+      // The token is the record: its metadata already carries the human
+      // anchor and agent id, so there is no second off-chain document to
+      // keep in sync.
       localStorage.setItem("nftData", JSON.stringify({
         tokenId,
         transactionHash: txHash,
@@ -333,7 +332,7 @@ export default function MintNFTStep({ profileData, didId, onMintSuccess, onEdit 
           <div>
             <p className="text-xs text-muted-foreground">
               Once minted, your profile becomes tamper-proof on Unichain Sepolia. You'll own your profile as an NFT in
-              your wallet. Sensitive data is stored securely off-chain via Verida.
+              your wallet. Sensitive data stays on your own device.
             </p>
           </div>
         </div>
@@ -641,7 +640,7 @@ export default function MintNFTStep({ profileData, didId, onMintSuccess, onEdit 
                     </div>
 
                     <p className="text-[10px] text-muted-foreground mt-1">
-                      Private data is encrypted and stored via Verida. You control who can access it.
+                      Private data stays in your browser. You control who can access it.
                     </p>
                   </div>
                 </div>

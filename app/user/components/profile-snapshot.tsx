@@ -39,11 +39,11 @@ export default function ProfileSnapshot() {
   const [dataLoaded, setDataLoaded] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   
-  // Get Verida client and profile service
+  // Get account session and profile service
   const { client, isLoading: clientLoading, getDidId } = useAccountSession()
   const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
-  // Load user data from Verida
+  // Load user data from local storage
   useEffect(() => {
     const loadUserData = async () => {
       // Skip if already loaded or dependencies are still loading
@@ -55,13 +55,13 @@ export default function ProfileSnapshot() {
         setIsLoading(true)
         
         // Get DID from localStorage
-        let did = localStorage.getItem("veridaDID") || ""
+        let did = localStorage.getItem("accountId") || ""
         
         if (!did && client) {
           try {
             did = await getDidId() || ""
             if (did) {
-              localStorage.setItem("veridaDID", did)
+              localStorage.setItem("accountId", did)
             }
           } catch (error) {
             console.error("Error getting DID:", error)
@@ -69,7 +69,7 @@ export default function ProfileSnapshot() {
         }
         
         if (did) {
-          // Load profile data from Verida
+          // Load profile data from local storage
           try {
             const profile = await profileRestService.getProfile(did)
             console.log("Loaded profile data for snapshot:", profile)

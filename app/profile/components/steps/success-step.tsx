@@ -324,7 +324,7 @@ export default function SuccessStep({ profileData, didId, nftTokenId, transactio
                 <div className="mt-auto flex justify-between items-end">
                   <div className="bg-white/10 backdrop-blur-sm rounded-lg px-1.5 py-0.5 flex items-center gap-1">
                     <Shield className="h-2.5 w-2.5 text-white/80" />
-                    <span className="text-white/90 text-[9px]">Secured by Cheqd</span>
+                    <span className="text-white/90 text-[9px]">Secured by World ID</span>
                   </div>
 
                   <div className="bg-white/10 backdrop-blur-sm rounded-lg px-1.5 py-0.5">

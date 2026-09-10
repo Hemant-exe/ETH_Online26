@@ -20,10 +20,9 @@ interface ConnectWalletStepProps {
  *
  * One wallet, one purpose: holding the profile NFT on Unichain Sepolia.
  *
- * This step used to require *two* connections — a Verida vault for encrypted
- * storage and a Cheqd wallet for the DID — and would not advance until both
- * succeeded, which made it the single most common place onboarding stalled.
- * Storage is now local and identity comes from World ID, so neither is needed.
+ * Onboarding previously required two separate wallet connections before it
+ * would advance, which made this the most common place signups stalled.
+ * Storage is local and identity comes from World ID, so neither is needed.
  * The step is also skippable: minting is optional, and nothing else in the app
  * depends on a wallet.
  */

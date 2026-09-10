@@ -17,7 +17,7 @@ const defaultNftData = {
   explorerUrl: "https://sepolia.uniscan.xyz/tx/0x52178bef007c0224e5a65261f507d18a3db923280a618b13b1c4dff793060f8b",
   chainId: "1301",
   chainName: "Unichain Sepolia",
-  veridaDID: "" // Will be populated from localStorage
+  accountId: "" // Will be populated from localStorage
 }
 
 export default function NftDetails() {
@@ -41,13 +41,13 @@ export default function NftDetails() {
       }
     }
     
-    // If no veridaDID in NFT data, try to get it directly from localStorage
-    if (!nftData.veridaDID) {
-      const veridaDID = localStorage.getItem("veridaDID");
-      if (veridaDID) {
+    // If no accountId in NFT data, try to get it directly from localStorage
+    if (!nftData.accountId) {
+      const accountId = localStorage.getItem("accountId");
+      if (accountId) {
         setNftData(prev => ({
           ...prev,
-          veridaDID
+          accountId
         }));
       }
     }
@@ -238,35 +238,35 @@ export default function NftDetails() {
             </div>
           </motion.div>
           
-          {/* Verida DID Information */}
+          {/* Account ID Information */}
           <motion.div
             className="backdrop-blur-sm bg-white/90 rounded-xl border border-indigo-100 p-4 shadow-sm md:col-span-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <h3 className="text-sm font-medium text-indigo-700 mb-2">Linked Verida DID</h3>
+            <h3 className="text-sm font-medium text-indigo-700 mb-2">Linked Account</h3>
             <div className="flex items-center gap-2">
               <div className="relative flex-1 group">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-200/50 to-blue-200/50 rounded-md blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
                 <code className="relative block w-full rounded-md bg-white px-3 py-2 font-mono text-xs text-slate-700 overflow-hidden text-ellipsis">
-                  {nftData.veridaDID || "Not linked"}
+                  {nftData.accountId || "Not linked"}
                 </code>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600"
-                onClick={() => copyToClipboard(nftData.veridaDID || "", "veridaDID")}
-                disabled={!nftData.veridaDID}
+                onClick={() => copyToClipboard(nftData.accountId || "", "accountId")}
+                disabled={!nftData.accountId}
               >
-                {copied === "veridaDID" ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied === "accountId" ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Badge className="bg-gradient-to-r from-purple-400 to-fuchsia-400 text-white border-0">
-                      Verida
+                      Local storage
                     </Badge>
                   </TooltipTrigger>
                   <TooltipContent className="bg-white border border-purple-200">

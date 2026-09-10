@@ -26,14 +26,14 @@ export default function ChatInterface() {
   const isMobile = useMediaQuery("(max-width: 768px)")
   const [showChatList, setShowChatList] = useState(!isMobile)
   const [isLoading, setIsLoading] = useState(false)
-  const { client, isLoading: veridaLoading, getDidId } = useAccountSession()
+  const { client, isLoading: sessionLoading, getDidId } = useAccountSession()
   const [userDid, setUserDid] = useState<string | null>(null)
   const hasInitializedRef = useRef(false)
   const isLoadingMessagesRef = useRef(false)
   const loadedGroupsRef = useRef(new Set<string>())
   const loadedMessagesRef = useRef<Record<string, boolean>>({})
 
-  // Auto-connect to Verida and load chats only once
+  // Auto-connect to local storage and load chats only once
   useEffect(() => {
     // Only run this effect once
     if (hasInitializedRef.current) return;
@@ -45,7 +45,7 @@ export default function ChatInterface() {
         
         if (client && !client.isConnected()) {
           await client.connect();
-          console.log("Connected to Verida");
+          console.log("Connected to local storage");
         }
         
         if (client && client.isConnected()) {
@@ -65,27 +65,27 @@ export default function ChatInterface() {
       }
     }
     
-    if (!veridaLoading) {
+    if (!sessionLoading) {
       initializeApp();
     }
-  }, [veridaLoading, client, getDidId]);
+  }, [sessionLoading, client, getDidId]);
 
   // Update UI when screen size changes
   useEffect(() => {
     setShowChatList(!isMobile || !selectedChat)
   }, [isMobile, selectedChat])
 
-  // Load chat groups from Verida
+  // Load chat groups from local storage
   const loadChatGroups = async () => {
     try {
       console.log("Loading chat groups...");
       
-      // Get chat groups from Verida
+      // Get chat groups from local storage
       const groups = await getChatGroups();
       console.log("Loaded chat groups:", groups);
       
       if (groups.length > 0) {
-        // Map Verida chat groups to conversation format
+        // Map stored chat groups to conversation format
         const loadedConversations = groups.map(group => {
           // Find other participant (not the current user)
           const otherParticipant = group.participants.find(p => p.did !== userDid);
@@ -143,7 +143,7 @@ export default function ChatInterface() {
           return bTimestamp - aTimestamp;
         });
         
-        // Use actual Verida data rather than combining with mock data
+        // Use actual stored data rather than combining with mock data
         setConversations(sortedConversations);
         
         // If no conversations selected but we have conversations, select the first one
@@ -153,7 +153,7 @@ export default function ChatInterface() {
           await loadMessages(sortedConversations[0].id, sortedConversations[0].name);
         }
       } else {
-        // If no Verida conversations, use mock data temporarily
+        // If no stored conversations, use mock data temporarily
         setConversations(mockConversations);
       }
     } catch (error) {
@@ -183,7 +183,7 @@ export default function ChatInterface() {
       setIsLoading(true);
       console.log(`Loading messages for chat ${chatId} with name ${groupName || 'unknown'}`);
       
-      // Get messages from Verida - IMPORTANT: Pass both groupId AND groupName to properly filter messages
+      // Get messages from local storage - IMPORTANT: Pass both groupId AND groupName to properly filter messages
       const messages = await getMessages(chatId, groupName);
       console.log(`Loaded ${messages.length} messages for group ${chatId} with name ${groupName || 'unknown'}`);
       
@@ -278,8 +278,8 @@ export default function ChatInterface() {
     }, 1000);
   }
 
-  // Manually connect to Verida if not already connected
-  const handleConnectVerida = async () => {
+  // Manually connect to local storage if not already connected
+  const handleConnectAccount = async () => {
     try {
       setIsLoading(true);
       
@@ -289,14 +289,14 @@ export default function ChatInterface() {
         if (did) {
           setUserDid(did);
           toast({
-            title: "Connected to Verida",
+            title: "Connected to local storage",
             description: "Successfully connected to your blockchain wallet.",
           });
           await loadChatGroups();
         }
       }
     } catch (error) {
-      console.error("Failed to connect to Verida:", error);
+      console.error("Failed to connect to local storage:", error);
       toast({
         title: "Connection Failed",
         description: "Could not connect to your blockchain wallet. Please try again.",
@@ -322,8 +322,8 @@ export default function ChatInterface() {
             conversations={conversations} 
             selectedChatId={selectedChat} 
             onSelectChat={handleSelectChat} 
-            isLoading={isLoading || veridaLoading}
-            onRefresh={handleConnectVerida}
+            isLoading={isLoading || sessionLoading}
+            onRefresh={handleConnectAccount}
           />
         </motion.div>
       )}

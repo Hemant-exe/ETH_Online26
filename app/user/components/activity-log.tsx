@@ -22,7 +22,7 @@ const activityData = [
     action: "Profile Update",
     hash: "0xabcd...1234",
     status: "success",
-    explorerUrl: "https://explorer.cheqd.io/tx/abcd1234",
+    explorerUrl: "https://hashscan.io/testnet/transaction/abcd1234",
   },
   {
     id: "tx2",
@@ -30,7 +30,7 @@ const activityData = [
     action: "DID Verification",
     hash: "0xefgh...5678",
     status: "success",
-    explorerUrl: "https://explorer.cheqd.io/tx/efgh5678",
+    explorerUrl: "https://hashscan.io/testnet/transaction/efgh5678",
   },
   {
     id: "tx3",
@@ -38,7 +38,7 @@ const activityData = [
     action: "NFT Mint",
     hash: "0xijkl...9012",
     status: "success",
-    explorerUrl: "https://explorer.cheqd.io/tx/ijkl9012",
+    explorerUrl: "https://hashscan.io/testnet/transaction/ijkl9012",
   },
   {
     id: "tx4",
@@ -46,7 +46,7 @@ const activityData = [
     action: "Key Rotation",
     hash: "0xmnop...3456",
     status: "pending",
-    explorerUrl: "https://explorer.cheqd.io/tx/mnop3456",
+    explorerUrl: "https://hashscan.io/testnet/transaction/mnop3456",
   },
 ]
 

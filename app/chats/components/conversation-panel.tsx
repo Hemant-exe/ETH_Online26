@@ -93,7 +93,7 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
     return () => clearTimeout(timer);
   }, []);
 
-  // Get user DID when Verida client is loaded
+  // Get user DID when account session is loaded
   useEffect(() => {
     let isMounted = true;
     
@@ -259,11 +259,11 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
       // Call the onSendMessage callback to update UI immediately
       onSendMessage(messageToSend);
       
-      // Save to Verida if authenticated
+      // Save to local storage if authenticated
       if (userDid && client && client.isConnected()) {
         try {
-          // Convert to Verida format
-          const veridaMessage = convertToStoredMessage(
+          // Convert to local storage format
+          const storedMessage = convertToStoredMessage(
             messageObj,
             conversation.id,
             userDid,
@@ -271,14 +271,14 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
           );
           
           // CRITICAL: Use the exact conversation name as the group name
-          veridaMessage.groupName = conversation.name || `Chat with ${conversation.user.name}`;
-          console.log(`Sending message to group: ${conversation.id} with name: ${veridaMessage.groupName}`);
+          storedMessage.groupName = conversation.name || `Chat with ${conversation.user.name}`;
+          console.log(`Sending message to group: ${conversation.id} with name: ${storedMessage.groupName}`);
           
-          // Save to Verida
-          await saveMessage(veridaMessage);
-          console.log("Message saved to Verida:", veridaMessage);
+          // Save to local storage
+          await saveMessage(storedMessage);
+          console.log("Message saved to local storage:", storedMessage);
         } catch (error) {
-          console.error("Failed to save message to Verida:", error);
+          console.error("Failed to save message to local storage:", error);
           toast({
             title: "Message Sent",
             description: "Message delivered but failed to save to blockchain.",
@@ -286,7 +286,7 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
           });
         }
       } else {
-        console.warn("Cannot save to Verida: Not authenticated");
+        console.warn("Cannot save to local storage: Not authenticated");
       }
       
       // Clear the input
@@ -372,8 +372,8 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
           
           onSendMessage(aiResponse);
           
-          // Save AI response to Verida
-          saveAiMessageToVerida(aiResponse);
+          // Save AI response to local storage
+          saveAiMessage(aiResponse);
           
           // Generate new suggestion after response with a delay
           setTimeout(() => {
@@ -397,8 +397,8 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
         // Call the onSendMessage callback to update UI immediately
         onSendMessage(randomResponse);
         
-        // Save AI message to Verida
-        saveAiMessageToVerida(randomResponse);
+        // Save AI message to local storage
+        saveAiMessage(randomResponse);
         
         // Generate new suggestion after a short delay
         setTimeout(() => {
@@ -416,15 +416,15 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       onSendMessage(randomResponse);
       
-      // Save AI message to Verida
-      saveAiMessageToVerida(randomResponse);
+      // Save AI message to local storage
+      saveAiMessage(randomResponse);
       
       setIsGeneratingResponse(false);
     }
   };
   
-  // Helper function to save AI messages to Verida
-  const saveAiMessageToVerida = async (content: string) => {
+  // Helper function to save AI messages to local storage
+  const saveAiMessage = async (content: string) => {
     if (userDid && client && client.isConnected()) {
       const aiMessage = {
         id: `ai-msg-${Date.now()}`,
@@ -435,8 +435,8 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
       };
       
       try {
-        // Convert to Verida format and save
-        const veridaMessage = convertToStoredMessage(
+        // Convert to local storage format and save
+        const storedMessage = convertToStoredMessage(
           aiMessage,
           conversation.id,
           `ai-twin-${userDid}`, // AI twin DID
@@ -444,14 +444,14 @@ export default function ConversationPanel({ conversation, onSendMessage }: Conve
         );
         
         // CRITICAL: Use the exact conversation name as the group name
-        veridaMessage.groupName = conversation.name || `Chat with ${conversation.user.name}`;
-        console.log(`Sending AI message to group: ${conversation.id} with name: ${veridaMessage.groupName}`);
+        storedMessage.groupName = conversation.name || `Chat with ${conversation.user.name}`;
+        console.log(`Sending AI message to group: ${conversation.id} with name: ${storedMessage.groupName}`);
         
-        // Save the message to Verida
-        await saveMessage(veridaMessage);
-        console.log("AI message saved to Verida:", veridaMessage);
+        // Save the message to local storage
+        await saveMessage(storedMessage);
+        console.log("AI message saved to local storage:", storedMessage);
       } catch (error) {
-        console.error("Failed to save AI message to Verida:", error);
+        console.error("Failed to save AI message to local storage:", error);
       }
     }
   };
