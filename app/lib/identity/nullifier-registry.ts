@@ -28,7 +28,22 @@ interface RegistryEntry {
    */
   nullifier: string;
   action: string;
+  /**
+   * The account this human owns, derived from the nullifier.
+   *
+   * Must match what the client session promotes itself to on verification, or
+   * every later route that authorises by nullifier rejects the very session
+   * that just verified.
+   */
   accountId: string;
+  /**
+   * The session that presented the proof.
+   *
+   * `accountId` is a function of the nullifier, so it cannot distinguish a
+   * second claimant from the first. This can: it records the id the session
+   * held *before* promotion, which is what duplicate detection compares.
+   */
+  claimant?: string;
   issuerSchemaId: number;
   verifiedAt: string;
 }
@@ -103,6 +118,7 @@ export async function claimNullifier(params: {
   nullifier: string;
   action: string;
   accountId: string;
+  claimant: string;
   issuerSchemaId: number;
 }): Promise<ClaimResult> {
   const nullifier = normaliseNullifier(params.nullifier);
@@ -115,7 +131,13 @@ export async function claimNullifier(params: {
     );
 
     if (existing) {
-      if (existing.accountId !== params.accountId) {
+      // Two ways this is legitimately the same person: the session that first
+      // claimed the nullifier is re-verifying, or an already-promoted session
+      // is (its id is the derived account id by then).
+      const sameClaimant =
+        params.claimant === existing.claimant || params.claimant === existing.accountId;
+
+      if (!sameClaimant) {
         return {
           ok: false,
           conflict: { accountId: existing.accountId, verifiedAt: existing.verifiedAt },
@@ -133,6 +155,7 @@ export async function claimNullifier(params: {
       nullifier,
       action: params.action,
       accountId: params.accountId,
+      claimant: params.claimant,
       issuerSchemaId: params.issuerSchemaId,
       verifiedAt: new Date().toISOString(),
     });

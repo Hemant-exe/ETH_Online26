@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { accountIdFromAnchor } from '@/app/lib/account/account-id';
 import { claimNullifier } from '@/app/lib/identity/nullifier-registry';
 import {
   SELFIE_CHECK_SCHEMA_ID,
@@ -178,10 +179,17 @@ export async function POST(request: Request) {
   }
 
   /* ---------------- Uniqueness ---------------- */
+  // Record the account the client is about to promote itself to, not the
+  // anonymous id it presented. Verification re-derives the account id from the
+  // nullifier (`attachHumanAnchor`), so storing the anonymous id would leave
+  // this registry pointing at an account that no longer exists — and every
+  // route that authorises by nullifier would reject the session that just
+  // verified. `claimant` keeps duplicate detection working.
   const claim = await claimNullifier({
     nullifier: verification.nullifierHash,
     action: WORLD_ACTION,
-    accountId,
+    accountId: accountIdFromAnchor(verification.nullifierHash),
+    claimant: accountId,
     issuerSchemaId: verification.issuerSchemaId,
   });
 

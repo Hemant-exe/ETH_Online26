@@ -3,12 +3,15 @@
 Written while building [Proof of Heart](README.md) against World ID Selfie Check, World AgentKit /
 AgentBook, and Hedera x402. Recorded as it happened rather than reconstructed afterwards.
 
-**Context that shapes this feedback:** this integration was written from documentation only, without
+**Context that shapes this feedback:** the integration was written from documentation only, without
 running the SDKs (no Node on the build machine — see README limitations). That makes it an unusually
 sharp test of whether the *docs alone* are sufficient to integrate correctly. Where I had to guess,
-that is a documentation gap by definition, and those are the findings below. Conversely, I could not
-report on runtime error messages, latency, or SDK ergonomics-in-practice, so those sections are
-thinner than they should be.
+that is a documentation gap by definition, and those are the findings below.
+
+Node became available later, and the flow was then run end to end against real credentials. Two of
+the findings below — the AgentBook CLI's broken npx install, and the Orb verification requirement —
+come from that run rather than from reading, and are marked as such. Everything else stands as
+originally written.
 
 ---
 
@@ -156,6 +159,81 @@ registration I cannot confirm — which weakens the exact property the feature e
 **Ask:** document a server-side registration API, or state plainly that per-user agent registration
 is out of scope for now so builders can design around it.
 
+### Blocking for a remote hackathon: registration requires Orb verification
+
+*Found by running the CLI, not by reading.*
+
+The registration docs say the CLI "prompts World App verification", which reads as the same
+verification any World App user can complete. It is not. Scanning the QR opens World App on a
+**Verify with Orb** screen whose only two options are *I'm with an Orb* and *Find an Orb*. There is
+no device-level path, and `agentkit register --help` exposes no verification-level flag — the only
+options are `--auto` and `--manual`, both about relay submission.
+
+So AgentBook registration requires a physical iris scan at an Orb. For an online hackathon that is
+a hard stop for any participant who does not happen to live near one, and unlike the Selfie Check
+enablement problem it cannot be unblocked by a World contact either.
+
+The requirement itself is defensible — Orb uniqueness is *why* AgentBook's answer is worth
+anything, and weakening it to device-level would make the registry much less meaningful. The problem
+is purely that it is not stated. Nothing on the registration page says "you must be Orb-verified
+before this command can succeed", so you discover it after installing the CLI, generating an agent
+wallet, and scanning a QR.
+
+The practical consequence for this app: every resolution returns `source: 'local'`
+(`app/lib/identity/agent-book.ts:100–109`), so the human-backing claim is honest but not
+independently checkable — the one property AgentBook exists to provide. Notably, the payment gate
+keys on `humanBacked` rather than on AgentBook registration
+(`app/api/twin/infer/route.ts:68`), so paid inference still works; the demo degrades in exactly one
+dimension rather than breaking.
+
+**Ask:** state the required verification level on the registration page, above the install command.
+Two sentences would have saved the whole detour. Longer term, an Orb-less sandbox registry — clearly
+marked as unverifiable, the way World's own sandbox apps are — would let remote hackathon
+participants demonstrate the full round trip.
+
+### Bug: `npx @worldcoin/agentkit-cli` cannot run at all
+
+*Found by running the CLI, not by reading.*
+
+The documented invocation fails immediately on a clean machine:
+
+```
+$ npx @worldcoin/agentkit-cli register 0x…
+Need to install the following packages:
+@worldcoin/agentkit-cli@0.2.0
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'react' imported from
+  /home/…/.npm/_npx/8862a722702986de/node_modules/zustand/esm/index.mjs
+```
+
+`zustand` imports `react`, React is a peer dependency, and npx installs the CLI standalone — so
+nothing satisfies it. A command-line tool has no business depending on React at all; it is presumably
+reaching a browser-oriented store module. Node v24.21.0, npm 11.19.0.
+
+Two things make this harder to work around than it looks:
+
+- `npx -p react -p @worldcoin/agentkit-cli agentkit …` does **not** fix it. npx does not place the
+  extra package in the sandbox `node_modules`, so the resolution failure is identical.
+- The published bin is named `agentkit`, not `@worldcoin/agentkit-cli`, so the `-p` form needs a
+  different name than the documented invocation — an easy second dead end.
+
+What actually works is installing the CLI into a project that already has React, so `zustand`
+resolves it by walking up the tree:
+
+```
+npm i -D @worldcoin/agentkit-cli
+npx agentkit register 0x…
+```
+
+That is what this repo now does (`package.json`, `agent:register`). Once it loads, the CLI is good:
+`agentkit status <address>` is a genuinely useful read-only check, and its output names the registry
+contract and chain, which answered the Base-vs-World-Chain question below faster than the docs did.
+
+Minor, same area: `agentkit --help` self-reports `agentkit@0.1.0` while the published package is
+`0.2.0`.
+
+**Ask:** drop React from the CLI's dependency graph, or bundle it. Until then the install line in
+the docs does not work as written.
+
 ### Blocking: `createAgentBookVerifier()`'s return shape is undocumented
 
 > `createAgentBookVerifier()` … resolves registered agents against World Chain's canonical
@@ -264,11 +342,18 @@ unavailable, and export names were the thing I most needed.
 
 ## Cross-cutting
 
-**One suggestion for all three.** Every blocking issue above is a missing *type or exact string* —
-the preset identifier, the AgentBook record shape, the payer accessor — not missing prose. All three
-projects document their concepts well and their exact values poorly. Publishing the TypeScript types
-for every value that crosses an API boundary would have removed roughly every guess in this
-document.
+**One suggestion for all three.** Nearly every blocking issue above is a missing *type or exact
+string* — the preset identifier, the AgentBook record shape, the payer accessor — not missing prose.
+All three projects document their concepts well and their exact values poorly. Publishing the
+TypeScript types for every value that crosses an API boundary would have removed roughly every guess
+in this document.
+
+**The two hard stops were both unstated prerequisites, not missing types.** Selfie Check must be
+enabled for your app by a World contact; AgentBook registration requires Orb verification. Both are
+reasonable requirements. Neither appears where a developer meets it — at the top of the page holding
+the code sample they are about to run — so both were discovered after building against them. For a
+fixed-length online hackathon, a one-line "before you start, you need X" on each integration page
+is worth more than any amount of reference material further down.
 
 **What worked without friction, for balance:** the x402 two-phase flow was unambiguous once found;
 World's separation of proof-verification (theirs) from uniqueness-enforcement (mine) is the right

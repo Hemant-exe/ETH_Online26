@@ -1,5 +1,7 @@
 'use client';
 
+import { accountIdFromAnchor } from './account-id';
+
 /**
  * The user's local account session.
  *
@@ -40,9 +42,7 @@ export interface AccountSnapshot {
  * The nullifier is already a hash, so truncating it is sufficient here; it is
  * never used as a security boundary on its own.
  */
-export function accountIdFromAnchor(nullifierHash: string): string {
-  return `poh_${nullifierHash.replace(/^0x/, '').slice(0, 40)}`;
-}
+export { accountIdFromAnchor };
 
 function anonymousAccountId(): string {
   const random =

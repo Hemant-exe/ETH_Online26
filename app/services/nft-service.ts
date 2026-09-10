@@ -14,19 +14,32 @@ export interface ProfileNFTService {
   getProfileTokenId(address: string): Promise<string>;
   getProfileURI(tokenId: string): Promise<string>;
   getContractAddress(): string;
-  getProvider(): ethers.providers.Web3Provider | null;
+  getProvider(): Promise<ethers.providers.Web3Provider | null>;
 }
 
 export class Web3ProfileNFTService implements ProfileNFTService {
   private contract: ethers.Contract | null = null;
   private provider: ethers.providers.Web3Provider | null = null;
   private signer: ethers.Signer | null = null;
-  
-  constructor() {
-    this.initialize();
-  }
-  
+  private initPromise: Promise<void> | null = null;
+
+  // No constructor work. A wallet provider only exists in the browser, so
+  // initialising eagerly threw an unhandled rejection on every server render
+  // of any module that imports the singleton below. Every method initialises
+  // on demand instead.
+
   private async initialize() {
+    // Deduplicate concurrent callers, but drop a failed attempt so a later
+    // call can retry once the wallet is actually connected.
+    this.initPromise ??= this.connect().catch((error) => {
+      this.initPromise = null;
+      throw error;
+    });
+
+    return this.initPromise;
+  }
+
+  private async connect() {
     try {
       // Get the provider from Leap wallet
       const ethereumProvider = getEvmProvider();
@@ -202,10 +215,18 @@ export class Web3ProfileNFTService implements ProfileNFTService {
    * Get the provider
    * @returns The Web3Provider if available
    */
-  getProvider(): ethers.providers.Web3Provider | null {
+  async getProvider(): Promise<ethers.providers.Web3Provider | null> {
+    try {
+      if (!this.provider) await this.initialize();
+    } catch {
+      // No wallet available. Callers treat null as "cannot connect".
+      return null;
+    }
+
     return this.provider;
   }
 }
 
-// Singleton instance of the NFT service
+// Singleton instance of the NFT service. Constructing it is side-effect free,
+// so importing this module is safe during server rendering.
 export const nftService = new Web3ProfileNFTService(); 
