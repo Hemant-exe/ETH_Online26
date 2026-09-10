@@ -28,7 +28,7 @@ export default function PhotosStep({ profileData, updateProfileData, onContinue 
   // Keep track of uploaded photos data for later use
   const [photoDataArray, setPhotoDataArray] = useState<any[]>([])
   
-  // Fetch existing photos from Verida when component mounts
+  // Fetch existing photos from local storage when component mounts
   useEffect(() => {
     const fetchExistingPhotos = async () => {
       // Only fetch if we don't already have photos and we have a DID
@@ -292,7 +292,7 @@ export default function PhotosStep({ profileData, updateProfileData, onContinue 
           <InfoIcon className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-sm text-muted-foreground">
-              All images are stored securely off-chain using the Verida network. Your NFT profile will link to these photos via a hashed
+              Photos stay on this device and are never uploaded. Your NFT profile links to them by a hashed
               reference for authenticity.
             </p>
           </div>

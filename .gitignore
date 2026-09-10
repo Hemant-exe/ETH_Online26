@@ -43,3 +43,6 @@ next-env.d.ts
 
 # local server-side demo state (nullifier registry, receipts cache)
 .data/
+
+# local agent guidance, not part of the submission
+CLAUDE.md

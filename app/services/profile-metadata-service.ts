@@ -8,8 +8,8 @@ import type { ProfileData } from "../profile/components/profile-creation-flow";
  * unique human minted it, and which registered agent speaks for them.
  *
  * That is why `humanAnchor` and `agentId` are first-class fields rather than
- * attributes. They previously pointed at a Verida DID and an optional Cheqd
- * DID, neither of which asserted anything about the holder being a person.
+ * attributes. Earlier revisions carried opaque identifier strings here,
+ * none of which asserted anything about the holder being a person.
  */
 interface ProfileMetadata {
   name: string;

@@ -16,7 +16,7 @@ export default function IntroStep({ onContinue }: IntroStepProps) {
           Create Your Decentralized Dating Profile
         </CardTitle>
         <CardDescription className="text-lg mt-2">
-          Here, you'll set up your secure profile and mint it as an NFT on the Cheqd protocol. We'll also create your
+          Here, you'll set up your secure profile and mint it as an NFT on the World ID protocol. We'll also create your
           Decentralized Identity (DID) to protect your privacy and ownership rights.
         </CardDescription>
       </CardHeader>
@@ -24,7 +24,7 @@ export default function IntroStep({ onContinue }: IntroStepProps) {
         <h2 className="text-2xl font-semibold text-center">Complete Your Profile & Mint Your NFT</h2>
         <p className="text-center text-muted-foreground">
           By creating a DID, you gain full control of your data. Only minimal information will be stored on-chain, with
-          sensitive details kept securely off-chain via Verida.
+          sensitive details kept on your own device, never uploaded.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">

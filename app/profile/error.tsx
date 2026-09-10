@@ -33,10 +33,10 @@ export default function Error({
         </CardHeader>
         <CardContent className="text-center">
           <p className="text-red-600 bg-red-50 p-4 rounded-lg text-sm mb-4">
-            {error.message || "There was an error connecting to the Verida network. Please try again."}
+            {error.message || "Something went wrong setting up your account. Please try again."}
           </p>
           <p className="text-gray-600 mb-4">
-            This could be due to network issues or problems with the Verida integration.
+            This is usually a network issue. Your saved data is untouched.
             Please try refreshing the page or try again later.
           </p>
         </CardContent>

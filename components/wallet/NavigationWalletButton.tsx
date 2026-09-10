@@ -71,7 +71,7 @@ export default function NavigationWalletButton() {
     }
   }
 
-  const disconnectWallet = async () => {
+  const handleDisconnectWallet = async () => {
     try {
       // Call the disconnectWallet utility function
       if (isWalletAvailable()) {
@@ -138,7 +138,7 @@ export default function NavigationWalletButton() {
   const desktopButton = walletAddress ? (
     <Button
       variant="outline"
-      onClick={disconnectWallet}
+      onClick={handleDisconnectWallet}
       className="hidden md:flex border-[#6D28D9] bg-gradient-to-r from-[#6D28D9]/10 to-[#EC4899]/10 text-[#6D28D9] hover:bg-[#6D28D9] hover:text-white relative overflow-hidden group transition-all duration-300"
     >
       <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-[#6D28D9]/0 to-[#EC4899]/0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
@@ -204,7 +204,7 @@ export default function NavigationWalletButton() {
   // For mobile
   const mobileButton = walletAddress ? (
     <Button
-      onClick={disconnectWallet}
+      onClick={handleDisconnectWallet}
       className="bg-gradient-to-r from-[#6D28D9] to-[#EC4899] text-white hover:opacity-90 w-full group relative overflow-hidden transition-all duration-300"
     >
       <span className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-10 transition-opacity"></span>

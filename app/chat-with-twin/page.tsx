@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { HeartLoader } from "@/components/ui/heart-loader"
+import HbarMeter from "@/app/components/payments/hbar-meter"
 
 export default function ChatWithTwinPage() {
   const [twinData, setTwinData] = useState<any>(null)
@@ -122,7 +123,7 @@ export default function ChatWithTwinPage() {
             description: `${data.name}'s AI twin is ready to chat with you.`,
           });
         } else {
-          console.log("No AI twin data found in Verida");
+          console.log("No AI twin data found in local storage");
           toast({
             title: "No AI Twin Found",
             description: "You need to create an AI twin first before chatting.",
@@ -133,7 +134,7 @@ export default function ChatWithTwinPage() {
         console.error("Failed to fetch twin data:", error);
         toast({
           title: "Error Loading Twin",
-          description: error instanceof Error ? error.message : "Could not load your AI twin from Verida.",
+          description: error instanceof Error ? error.message : "Could not load your AI twin from local storage.",
           variant: "destructive",
         });
       } finally {
@@ -342,7 +343,7 @@ export default function ChatWithTwinPage() {
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-xl shadow-xl flex flex-col items-center">
             <HeartLoader size="lg" showText text="Connecting to Your Twin" />
-            <p className="text-pink-500 mt-4 text-sm">Retrieving your AI twin from Verida...</p>
+            <p className="text-pink-500 mt-4 text-sm">Loading your AI twin…</p>
           </div>
         </div>
       )}
@@ -382,11 +383,14 @@ export default function ChatWithTwinPage() {
               </Avatar>
               
               <div>
-                <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2 flex-wrap">
                   {twinData?.name || "AI Twin"}
                   <Badge variant="outline" className="bg-pink-50 text-pink-700 border-pink-200 text-xs">
                     AI Twin
                   </Badge>
+                  {/* Each reply is a paid call, so the running total is shown
+                      alongside the twin rather than buried in settings. */}
+                  <HbarMeter />
                 </h1>
                 {twinData && (
                   <p className="text-sm text-slate-600">
@@ -590,7 +594,7 @@ export default function ChatWithTwinPage() {
         
         {/* Footer */}
         <div className="mt-4 text-center text-sm text-slate-500">
-          <p>Powered by Verida LLM API • Your data is securely stored in your Verida wallet</p>
+          <p>Each reply is a metered x402 payment on Hedera • Your data stays on this device</p>
         </div>
       </div>
     </div>

@@ -63,7 +63,10 @@ export async function runInference(request: InferenceRequest): Promise<Inference
 
   const maxTokens = request.maxTokens ?? 1024;
 
-  const response = await client.beta.messages.create({
+  // Cast at the boundary: `fallbacks` and `output_config.effort` are recent
+  // additions, and pinning an SDK minor that predates their types would turn a
+  // working request into a compile error. The wire format is what matters here.
+  const params = {
     model: MODEL,
     max_tokens: maxTokens,
     ...(request.system ? { system: request.system } : {}),
@@ -74,7 +77,9 @@ export async function runInference(request: InferenceRequest): Promise<Inference
     betas: ['server-side-fallback-2026-07-01'],
     fallbacks: 'default',
     messages: [{ role: 'user', content: request.prompt }],
-  });
+  } as unknown as Parameters<typeof client.beta.messages.create>[0];
+
+  const response = (await client.beta.messages.create(params)) as any;
 
   // `stop_details` is only populated on a refusal, so check `stop_reason`
   // before reading content.
@@ -89,9 +94,9 @@ export async function runInference(request: InferenceRequest): Promise<Inference
     };
   }
 
-  const text = response.content
-    .filter((block): block is { type: 'text'; text: string } => block.type === 'text')
-    .map((block) => block.text)
+  const text = (response.content as Array<{ type: string; text?: string }>)
+    .filter((block) => block.type === 'text')
+    .map((block) => block.text ?? '')
     .join('\n')
     .trim();
 

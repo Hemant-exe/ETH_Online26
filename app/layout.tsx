@@ -5,14 +5,10 @@ import { Toaster } from "@/components/ui/toaster"
 import DatingNavbar from "./components/dating-navbar"
 import MainWrapper from "./components/main-wrapper"
 
-// Import the Verida fonts CSS
-import './styles/verida-fonts.css';
-
 export const metadata = {
-  title: "VeraLove - Discover Love on the Decentralized Frontier",
+  title: "Proof of Heart — Dating Where Everyone Is Provably Human",
   description:
-    "A revolutionary dating platform powered by blockchain technology, decentralized identities, and AI-powered matchmaking.",
-  generator: 'hiten'
+    "A dating platform where World ID Selfie Check proves every profile belongs to a unique real person, and AI twins screen for compatibility over paid, auditable Hedera x402 calls.",
 }
 
 export default function RootLayout({

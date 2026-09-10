@@ -127,7 +127,7 @@ export default function PreferencesStep({ profileData, updateProfileData, onCont
       return
     }
 
-    // Save complete profile data to Verida
+    // Save complete profile data to local storage
     setIsSaving(true)
     setError(null)
     
@@ -159,7 +159,7 @@ export default function PreferencesStep({ profileData, updateProfileData, onCont
         console.warn("Using 'unknown' as DID. This might cause issues with data retrieval later.")
         toast({
           title: "Authentication Notice",
-          description: "Unable to authenticate with Verida. Your data will be saved with a temporary identifier.",
+          description: "No verified session yet. Your data will be saved under a temporary identifier.",
           duration: 5000,
         })
       }
@@ -197,7 +197,7 @@ export default function PreferencesStep({ profileData, updateProfileData, onCont
           
           // If we have photos, save them one by one
           if (profileData.photos && profileData.photos.length > 0) {
-            console.log(`Saving ${profileData.photos.length} photos to Verida...`)
+            console.log(`Saving ${profileData.photos.length} photos to local storage...`)
             
             // Use photoDataArray if available, otherwise create data from photos array
             const photoData = profileData.photoDataArray || profileData.photos.map((url, i) => ({
@@ -234,7 +234,7 @@ export default function PreferencesStep({ profileData, updateProfileData, onCont
           
           toast({
             title: "Profile Saved",
-            description: "Your complete profile has been securely stored using Verida.",
+            description: "Your profile has been saved to this device.",
             duration: 3000,
           })
           
@@ -556,7 +556,7 @@ export default function PreferencesStep({ profileData, updateProfileData, onCont
           {isSaving ? (
             <div className="flex items-center justify-center">
               <LoaderIcon className="h-4 w-4 animate-spin mr-2" />
-              <span>Saving to Verida...</span>
+              <span>Saving to local storage...</span>
             </div>
           ) : (
             "Continue to NFT Minting"

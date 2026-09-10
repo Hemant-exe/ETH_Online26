@@ -38,11 +38,11 @@ export default function EditProfileModal({ isOpen, onClose, profile }: EditProfi
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [dataLoaded, setDataLoaded] = useState(false)
   
-  // Get Verida client and profile service
+  // Get account session and profile service
   const { client, isLoading: clientLoading, getDidId } = useAccountSession()
   const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
-  // Load user data from Verida
+  // Load user data from local storage
   useEffect(() => {
     const loadUserData = async () => {
       // Skip if already loaded or dependencies are still loading
@@ -52,10 +52,10 @@ export default function EditProfileModal({ isOpen, onClose, profile }: EditProfi
       
       try {
         // Get DID from localStorage
-        const did = localStorage.getItem("veridaDID")
+        const did = localStorage.getItem("accountId")
         
         if (did) {
-          // Load profile data from Verida
+          // Load profile data from local storage
           try {
             const profile = await profileRestService.getProfile(did)
             console.log("Loaded profile data for edit modal:", profile)
@@ -98,10 +98,10 @@ export default function EditProfileModal({ isOpen, onClose, profile }: EditProfi
 
     try {
       // Get DID from localStorage
-      const did = localStorage.getItem("veridaDID")
+      const did = localStorage.getItem("accountId")
       
       if (did && profileRestService) {
-        // Save profile data to Verida
+        // Save profile data to local storage
         await profileRestService.updateProfile(did, {
           displayName: formData.name,
           bio: formData.bio,

@@ -52,9 +52,9 @@ export default function WalletPage() {
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center space-x-2">
               <div className="relative w-10 h-10">
-                <img src="/logo2.svg" alt="VeraLove Logo" className="w-full h-full" />
+                <img src="/logo2.svg" alt="Proof of Heart logo" className="w-full h-full" />
               </div>
-              <span className="font-bold text-xl tracking-tight text-[#1F2937]">VeraLove</span>
+              <span className="font-bold text-xl tracking-tight text-[#1F2937]">Proof of Heart</span>
             </Link>
           </div>
         </div>
@@ -68,7 +68,7 @@ export default function WalletPage() {
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-[#1F2937] mb-2">Connect Your Wallet</h1>
             <p className="text-[#6B7280]">
-              Connect your Leap wallet to access the full VeraLove experience
+              Connect your Leap wallet to access the full Proof of Heart experience
             </p>
           </div>
 
@@ -119,7 +119,7 @@ export default function WalletPage() {
       <footer className="border-t border-[#E5E7EB] bg-white py-6">
         <div className="container mx-auto px-4 md:px-6">
           <p className="text-center text-sm text-[#6B7280]">
-            © {new Date().getFullYear()} VeraLove. All rights reserved.
+            © {new Date().getFullYear()} Proof of Heart. All rights reserved.
           </p>
         </div>
       </footer>

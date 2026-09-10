@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle2Icon, ArrowRightIcon, InfoIcon } from "lucide-react"
+import { ArrowRightIcon, CheckCircle2Icon, Coins, InfoIcon, ScanFace } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
+
+import { accountSession } from "@/app/lib/account/session"
 
 interface SuccessStepProps {
   walletAddress: string
 }
 
 export default function SuccessStep({ walletAddress }: SuccessStepProps) {
-  const [cheqdWalletAddress, setCheqdWalletAddress] = useState<string | null>(null);
+  const [humanAnchor, setHumanAnchor] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get Cheqd wallet address from localStorage
-    const storedCheqdAddress = localStorage.getItem("cheqdWalletAddress");
-    if (storedCheqdAddress) {
-      setCheqdWalletAddress(storedCheqdAddress);
-    }
+    const load = async () => {
+      await accountSession.init();
+      setHumanAnchor(accountSession.getHumanAnchor());
+    };
+
+    load();
   }, []);
 
   return (
@@ -28,17 +31,19 @@ export default function SuccessStep({ walletAddress }: SuccessStepProps) {
             <CheckCircle2Icon className="h-6 w-6 text-green-600" />
           </div>
         </div>
-        <CardTitle className="text-xl">Wallets Connected — Let's Set Up Your Profile</CardTitle>
+        <CardTitle className="text-xl">You&apos;re Verified — Let&apos;s Set Up Your Profile</CardTitle>
         <CardDescription className="text-sm">
-          Both your Verida and Cheqd wallets are now linked. Next, you'll create a Decentralized Identity (DID) and mint your NFT-based profile.
+          Your account is set up and your humanity is proven. Next, build your profile and your AI
+          twin.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 px-4">
         <div className="bg-purple-50 p-4 rounded-lg flex items-start space-x-3">
-          <img src="/verida.jpg" alt="Verida" className="h-5 w-5 mt-0.5 flex-shrink-0 rounded-full" />
+          <InfoIcon className="h-5 w-5 mt-0.5 flex-shrink-0 text-purple-600" />
           <div>
             <p className="text-xs text-muted-foreground">
-              Your data remains secure and private with Verida, while your identity is verified through Cheqd blockchain technology.
+              Your profile and chats stay on this device. The only thing recorded about you
+              elsewhere is an anonymous World ID nullifier proving you are one unique person.
             </p>
           </div>
         </div>
@@ -49,11 +54,13 @@ export default function SuccessStep({ walletAddress }: SuccessStepProps) {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <div className="text-xs flex items-center">
-                <img src="/verida.jpg" alt="Verida" className="h-3 w-3 mr-1 rounded-full" />
-                <span className="text-muted-foreground">Verida Wallet:</span>
+                <Coins className="h-3 w-3 mr-1 text-purple-600" />
+                <span className="text-muted-foreground">Wallet:</span>
               </div>
               <div className="font-mono text-xs">
-                {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
+                {walletAddress
+                  ? `${walletAddress.substring(0, 6)}…${walletAddress.substring(walletAddress.length - 4)}`
+                  : "Not connected"}
               </div>
             </div>
 
@@ -61,12 +68,12 @@ export default function SuccessStep({ walletAddress }: SuccessStepProps) {
 
             <div className="flex justify-between items-center">
               <div className="text-xs flex items-center">
-                <img src="/cheqd.png" alt="Cheqd" className="h-3 w-3 mr-1 rounded-full" />
-                <span className="text-muted-foreground">Cheqd Wallet:</span>
+                <ScanFace className="h-3 w-3 mr-1 text-pink-600" />
+                <span className="text-muted-foreground">Human anchor:</span>
               </div>
               <div className="font-mono text-xs">
-                {cheqdWalletAddress ? 
-                  `${cheqdWalletAddress.substring(0, 6)}...${cheqdWalletAddress.substring(cheqdWalletAddress.length - 4)}` : 
+                {humanAnchor ? 
+                  `${humanAnchor.substring(0, 6)}...${humanAnchor.substring(humanAnchor.length - 4)}` : 
                   "Not connected"}
               </div>
             </div>
@@ -75,10 +82,10 @@ export default function SuccessStep({ walletAddress }: SuccessStepProps) {
 
             <div className="flex justify-between items-center">
               <div className="text-xs">
-                <span className="text-muted-foreground">DID Status:</span>
+                <span className="text-muted-foreground">Verification:</span>
               </div>
               <div className="text-xs">
-                <span className="text-green-600">Created with Cheqd</span>
+                <span className="text-green-600">Verified with World ID</span>
               </div>
             </div>
 
@@ -98,8 +105,8 @@ export default function SuccessStep({ walletAddress }: SuccessStepProps) {
           <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground mt-2">
             <div className="bg-white p-2 rounded-md">Create your dating profile</div>
             <div className="bg-white p-2 rounded-md">Set your preferences</div>
-            <div className="bg-white p-2 rounded-md">Mint your profile as an NFT</div>
-            <div className="bg-white p-2 rounded-md">Start matching securely</div>
+            <div className="bg-white p-2 rounded-md">Create your AI twin</div>
+            <div className="bg-white p-2 rounded-md">Run your first twin screening</div>
           </div>
         </div>
       </CardContent>

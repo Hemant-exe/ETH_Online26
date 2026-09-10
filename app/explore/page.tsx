@@ -12,12 +12,11 @@ export default function ExplorePage() {
   useEffect(() => {
     // Browsing needs a session, nothing more.
     //
-    // This used to demand a connected wallet *and* a Cheqd wallet before
-    // showing anyone a single profile, which put two blockchain prompts in
-    // front of the first thing a new user wants to do. Verification is what
-    // Explore actually cares about, and it changes ranking and available
-    // actions rather than access: unverified profiles are shown, flagged and
-    // rate-limited.
+    // Explore deliberately does not demand a wallet: putting a blockchain
+    // prompt in front of the first thing a new user wants to do costs more
+    // signups than it protects. Verification is what Explore cares about, and
+    // it changes ranking and available actions rather than access —
+    // unverified profiles are shown, flagged and rate-limited.
     const check = async () => {
       await accountSession.connect()
       const onboardingCompleted = localStorage.getItem("onboardingCompleted")

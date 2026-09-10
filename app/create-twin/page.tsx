@@ -23,7 +23,7 @@ export default function CreateAiTwinPage() {
     occupation: "",
     bio: "",
 
-    // Verida favorite schema required fields
+    // twin record schema required fields
     favouriteType: "recommendation",
     contentType: "document",
     uri: "",
@@ -110,10 +110,10 @@ export default function CreateAiTwinPage() {
           
           // toast({
           //   title: "Data Loaded",
-          //   description: "Your previous AI twin data has been loaded from Verida.",
+          //   description: "Your previous AI twin data has been loaded from local storage.",
           // });
         } else {
-          console.log("No AI twin data found in Verida");
+          console.log("No AI twin data found in local storage");
           // toast({
           //   title: "No Existing Data",
           //   description: "No previous AI twin data found. Starting with a new form.",
@@ -123,7 +123,7 @@ export default function CreateAiTwinPage() {
         console.error("Failed to fetch twin data:", error);
         // toast({
         //   title: "Error Loading Data",
-        //   description: error instanceof Error ? error.message : "Could not load your existing data from Verida.",
+        //   description: error instanceof Error ? error.message : "Could not load your existing data from local storage.",
         //   variant: "destructive",
         // });
       } finally {
@@ -158,7 +158,7 @@ export default function CreateAiTwinPage() {
           <div className="bg-white p-6 rounded-xl shadow-xl">
             <div className="flex flex-col items-center space-y-4">
               <HeartLoader size="lg" showText={true} text="Loading Your Twin Data" />
-              <p className="text-sm text-gray-500">Retrieving your saved data from Verida...</p>
+              <p className="text-sm text-gray-500">Loading your saved data…</p>
             </div>
           </div>
         </div>
@@ -243,9 +243,9 @@ export default function CreateAiTwinPage() {
               <div className="flex items-start gap-2">
                 <Database className="h-4 w-4 text-purple-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="text-xs font-medium text-purple-700 mb-1">Verida Storage</h4>
+                  <h4 className="text-xs font-medium text-purple-700 mb-1">Local Storage</h4>
                   <p className="text-xs text-purple-600">
-                    Your AI twin will be stored securely using the Verida Favourite schema with 
+                    Your AI twin is stored on this device with 
                     type: <span className="font-medium">{formData.favouriteType || "recommendation"}</span>,
                     content: <span className="font-medium">{formData.contentType || "document"}</span>
                     {formData.uri && (

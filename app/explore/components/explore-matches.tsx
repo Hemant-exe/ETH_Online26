@@ -6,6 +6,7 @@ import MatchesFeed from "./matches-feed"
 import MatchFilters from "./match-filters"
 import AiRecommendations from "./ai-recommendations"
 import DetailedProfile from "./detailed-profile"
+import TwinScreeningPanel from "./twin-screening-panel"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
@@ -148,6 +149,12 @@ export default function ExploreMatches() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Twin screening sits above the feed: it is the intended first move,
+          not a secondary action buried in a profile. */}
+      <div className="mb-8">
+        <TwinScreeningPanel />
       </div>
 
       <AnimatePresence mode="wait">

@@ -11,8 +11,8 @@ import { useAccountSession, useProfileRepository } from "@/app/lib/account/hooks
 
 // Define interface for off-chain data
 interface OffChainDataType {
-  veridaDID: string;
-  cheqdDID?: string; // Optional because it might not be available
+  accountId: string;
+  humanAnchor?: string; // Optional because it might not be available
   photos: string[];
   interests: string[];
   preferences: {
@@ -27,7 +27,7 @@ interface OffChainDataType {
 
 // Default data structure with empty values
 const defaultOffChainData: OffChainDataType = {
-  veridaDID: "", 
+  accountId: "", 
   photos: [],
   interests: [],
   preferences: {
@@ -36,7 +36,7 @@ const defaultOffChainData: OffChainDataType = {
     relationshipGoals: "Long-term",
     aiMatchingEnabled: true,
   },
-  encryptionStatus: "Encrypted with Verida protocol",
+  encryptionStatus: "Stored locally in your browser",
   lastSynced: new Date().toLocaleString()
 }
 
@@ -50,11 +50,11 @@ export default function OffChainData() {
   const [dataLoaded, setDataLoaded] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   
-  // Get Verida client and profile service
+  // Get account session and profile service
   const { client, isLoading: clientLoading, getDidId } = useAccountSession()
   const { service: profileRestService, isLoading: serviceLoading } = useProfileRepository()
 
-  // Load real data from Verida and localStorage
+  // Load real data from local storage and localStorage
   useEffect(() => {
     const loadUserData = async () => {
       // Skip if already loaded or dependencies are still loading
@@ -66,32 +66,32 @@ export default function OffChainData() {
         setIsLoading(true)
         
         // Get DID from localStorage
-        let veridaDID = localStorage.getItem("veridaDID") || ""
+        let accountId = localStorage.getItem("accountId") || ""
         
-        if (!veridaDID && client) {
+        if (!accountId && client) {
           try {
-            veridaDID = await getDidId() || ""
-            if (veridaDID) {
-              localStorage.setItem("veridaDID", veridaDID)
+            accountId = await getDidId() || ""
+            if (accountId) {
+              localStorage.setItem("accountId", accountId)
             }
           } catch (error) {
             console.error("Error getting DID:", error)
           }
         }
         
-        // Get Cheqd DID
-        const cheqdDID = localStorage.getItem("cheqdWalletAddress") || undefined
+        // Get Human Anchor
+        const humanAnchor = localStorage.getItem("humanAnchor") || undefined
         
-        if (veridaDID) {
-          // Load profile data from Verida
+        if (accountId) {
+          // Load profile data from local storage
           try {
-            const profile = await profileRestService.getProfile(veridaDID)
+            const profile = await profileRestService.getProfile(accountId)
             console.log("Loaded profile data for off-chain view:", profile)
             
             // Load photos
             let photos: string[] = []
             try {
-              const photoData = await profileRestService.getProfilePhotos(veridaDID)
+              const photoData = await profileRestService.getProfilePhotos(accountId)
               if (photoData && photoData.length > 0) {
                 photos = photoData.map((photo: any) => photo.photoUrl)
               }
@@ -110,12 +110,12 @@ export default function OffChainData() {
             
             // Update state with real data
             setOffChainData({
-              veridaDID,
-              ...(cheqdDID ? { cheqdDID } : {}),
+              accountId,
+              ...(humanAnchor ? { humanAnchor } : {}),
               photos: photos.length > 0 ? photos : ["/placeholder.svg?height=300&width=300"],
               interests,
               preferences,
-              encryptionStatus: "Encrypted with Verida protocol",
+              encryptionStatus: "Stored locally in your browser",
               lastSynced: localStorage.getItem("lastSyncTime") || new Date().toLocaleString()
             })
             
@@ -127,12 +127,12 @@ export default function OffChainData() {
             console.error("Error loading profile:", error)
             // Use minimal default data if profile loading fails
             setOffChainData({
-              veridaDID,
-              ...(cheqdDID ? { cheqdDID } : {}),
+              accountId,
+              ...(humanAnchor ? { humanAnchor } : {}),
               photos: ["/placeholder.svg?height=300&width=300"],
               interests: ["Blockchain", "Privacy", "Web3"],
               preferences: defaultOffChainData.preferences,
-              encryptionStatus: "Encrypted with Verida protocol",
+              encryptionStatus: "Stored locally in your browser",
               lastSynced: new Date().toLocaleString()
             })
           }
@@ -482,42 +482,42 @@ export default function OffChainData() {
               </div>
             ) : (
               <div className="backdrop-blur-sm bg-white/90 rounded-xl border border-indigo-100 p-4 shadow-sm space-y-4">
-                <h3 className="text-sm font-medium text-indigo-700">Verida DID (Decentralized Identifier)</h3>
+                <h3 className="text-sm font-medium text-indigo-700">Account Identifier</h3>
                 <div className="flex items-center gap-2">
                   <div className="relative flex-1 group">
                     <div className="absolute inset-0 bg-gradient-to-r from-cyan-200/50 to-blue-200/50 rounded-md blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
                     <code className="relative block w-full rounded-md bg-white px-3 py-2 font-mono text-sm text-slate-700 overflow-hidden text-ellipsis">
-                      {offChainData.veridaDID}
+                      {offChainData.accountId}
                     </code>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600"
-                    onClick={() => copyToClipboard(offChainData.veridaDID, "veridaDID")}
+                    onClick={() => copyToClipboard(offChainData.accountId, "accountId")}
                   >
-                    {copied === "veridaDID" ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copied === "accountId" ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </Button>
                 </div>
                 
-                {/* Add Cheqd DID display if available */}
-                {offChainData.cheqdDID && (
+                {/* Add Human Anchor display if available */}
+                {offChainData.humanAnchor && (
                   <>
-                    <h3 className="text-sm font-medium text-indigo-700 mt-2">Cheqd DID</h3>
+                    <h3 className="text-sm font-medium text-indigo-700 mt-2">Human Anchor</h3>
                     <div className="flex items-center gap-2">
                       <div className="relative flex-1 group">
                         <div className="absolute inset-0 bg-gradient-to-r from-cyan-200/50 to-blue-200/50 rounded-md blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
                         <code className="relative block w-full rounded-md bg-white px-3 py-2 font-mono text-sm text-slate-700 overflow-hidden text-ellipsis">
-                          {offChainData.cheqdDID}
+                          {offChainData.humanAnchor}
                         </code>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600"
-                        onClick={() => offChainData.cheqdDID && copyToClipboard(offChainData.cheqdDID, "cheqdDID")}
+                        onClick={() => offChainData.humanAnchor && copyToClipboard(offChainData.humanAnchor, "humanAnchor")}
                       >
-                        {copied === "cheqdDID" ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                        {copied === "humanAnchor" ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                       </Button>
                     </div>
                   </>
@@ -534,7 +534,7 @@ export default function OffChainData() {
                     </div>
                   </div>
                   
-                  <h3 className="text-sm font-medium text-indigo-700">Last Synced with Verida</h3>
+                  <h3 className="text-sm font-medium text-indigo-700">Last Saved Locally</h3>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 p-3 bg-blue-50 rounded-lg border border-blue-100">
                       <div className="flex items-center gap-2">
@@ -549,9 +549,9 @@ export default function OffChainData() {
                   <div className="flex items-start gap-2">
                     <AlertCircleIcon className="h-4 w-4 text-amber-600 mt-0.5" />
                     <div className="space-y-1">
-                      <h4 className="text-sm font-medium text-amber-800">Verida Data Privacy</h4>
+                      <h4 className="text-sm font-medium text-amber-800">Data Privacy</h4>
                       <p className="text-xs text-amber-700">
-                        Your profile data is encrypted and stored on the Verida network. Only you control who has access to your private information. The encrypted data is linked to your NFT profile on the blockchain.
+                        Your profile data is stored in this browser and never uploaded. Only you can read it. Your NFT profile links to it by hash, so the token proves what you published without exposing the rest.
                       </p>
                     </div>
                   </div>
@@ -564,7 +564,7 @@ export default function OffChainData() {
               disabled={isLoading}
             >
               <RefreshCwIcon className="h-4 w-4 mr-2" />
-              Sync with Verida
+              Refresh local data
             </Button>
           </motion.div>
         )}

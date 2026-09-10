@@ -22,7 +22,7 @@
   
 //   const sponsors = [
 //     {
-//       name: "Cheqd",
+//       name: "World",
 //       logo: "/placeholder.svg",
 //       tagline: "Ensuring blockchain integrity.",
 //       letter: "C",
@@ -30,7 +30,7 @@
 //       delay: 0.2,
 //     },
 //     {
-//       name: "Verida",
+//       name: "Hedera",
 //       logo: "/placeholder.svg",
 //       tagline: "Empowering decentralized identities.",
 //       letter: "V",

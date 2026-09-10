@@ -20,7 +20,7 @@ export default function AiTwinPreview({ formData }: AiTwinPreviewProps) {
   const [isTyping, setIsTyping] = useState(false)
   const [messages, setMessages] = useState<{ content: string; isAi: boolean }[]>([])
   const [userInput, setUserInput] = useState("")
-  const [veridaStatus, setVeridaStatus] = useState<'loading' | 'loaded' | 'none'>('none')
+  const [storageStatus, setStorageStatus] = useState<'loading' | 'loaded' | 'none'>('none')
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const initialLoadRef = useRef(false)
   const lastNameRef = useRef<string | null>(null)
@@ -33,10 +33,10 @@ export default function AiTwinPreview({ formData }: AiTwinPreviewProps) {
     }
   }, [messages, isTyping]);
 
-  // Check for Verida data
+  // Check for stored data
   useEffect(() => {
     if (formData.name && formData.favouriteType) {
-      setVeridaStatus('loaded');
+      setStorageStatus('loaded');
     }
   }, [formData]);
 
@@ -155,14 +155,14 @@ export default function AiTwinPreview({ formData }: AiTwinPreviewProps) {
           <h2 className="text-xl font-bold text-slate-800">AI Twin Preview</h2>
         </div>
         
-        {/* Add Verida Badge if data exists */}
-        {veridaStatus === 'loaded' && (
+        {/* Saved-locally badge */}
+        {storageStatus === 'loaded' && (
           <Badge 
             variant="outline" 
             className="bg-green-50 text-green-700 border-green-200 px-3 py-1 flex items-center gap-1"
           >
             <Database className="h-3 w-3 mr-1" />
-            Verida Data Loaded
+            Saved on this device
           </Badge>
         )}
         

@@ -13,7 +13,7 @@ export default function LoadingScreen() {
             <Heart className="h-10 w-10 text-[#EC4899]" />
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-[#4B5563]">VeraLove</h2>
+        <h2 className="text-2xl font-bold text-[#4B5563]">Proof of Heart</h2>
         <p className="text-[#EC4899] mt-2">Initializing secure environment...</p>
       </div>
     </div>

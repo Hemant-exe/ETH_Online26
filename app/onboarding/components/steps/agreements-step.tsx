@@ -41,7 +41,7 @@ export default function AgreementsStep({ onComplete }: AgreementsStepProps) {
           <InfoIcon className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-sm text-muted-foreground">
-              Our platform uses AI for personalized matchmaking and stores critical data on-chain using Verida and Cheqd, 
+              We use AI for matchmaking, prove humanity with World ID, and settle twin conversations on Hedera, 
               ensuring integrity and transparency. You retain ownership of your data via NFTs and can manage sensitive info off-chain.
             </p>
           </div>
@@ -91,7 +91,7 @@ export default function AgreementsStep({ onComplete }: AgreementsStepProps) {
                 I understand that this platform uses blockchain technology and AI
               </Label>
               <p className="text-sm text-muted-foreground">
-                I understand that this platform uses Verida and Cheqd blockchain technology for storing profile data and identity verification, 
+                I understand that this platform uses World ID for human verification and Hedera for metered AI payments, 
                 and AI for matchmaking purposes
               </p>
             </div>

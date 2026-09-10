@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Shield, ArrowRight, Heart, UserCircle, Lock, Fingerprint, HeartPulse, Flame, Zap, Sparkles, Star, CheckCircle, Stars, Database, Server, Brain, Wallet, LogOut } from "lucide-react"
+import { Shield, ArrowRight, Heart, UserCircle, Lock, Fingerprint, HeartPulse, Flame, Zap, Sparkles, Star, CheckCircle, Stars, Database, Server, Brain, Wallet, LogOut, ScanFace, Coins } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { checkNFTAndRedirect } from "@/utils/nft-check"
@@ -85,22 +85,24 @@ export default function HeroSection({ sectionRef }: HeroSectionProps) {
   
   const sponsors = [
     {
-      name: "Cheqd",
+      name: "World",
       logo: "/placeholder.svg",
-      color: "from-purple-600 to-indigo-700",
-      description: "Ensuring blockchain integrity and security with next-generation identity solutions.",
-      website: "https://cheqd.io",
-      role: "Verifiable AI",
-      icon: Brain
+      color: "from-slate-800 to-slate-950",
+      description:
+        "Selfie Check proves a unique human is behind every profile, and AgentBook proves a human stands behind every AI twin.",
+      website: "https://world.org",
+      role: "Proof of Human",
+      icon: ScanFace
     },
     {
-      name: "Verida",
+      name: "Hedera",
       logo: "/placeholder.svg",
-      color: "from-pink-600 to-purple-700",
-      description: "Empowering decentralized identities through innovative blockchain technology.",
-      website: "https://www.verida.network",
-      role: "Secure Data Storage",
-      icon: Database
+      color: "from-purple-600 to-indigo-700",
+      description:
+        "Every twin conversation is a metered x402 payment in HBAR, with a receipt published to a public consensus topic.",
+      website: "https://hedera.com",
+      role: "Agentic Payments",
+      icon: Coins
     },
   ];
 
@@ -138,7 +140,7 @@ export default function HeroSection({ sectionRef }: HeroSectionProps) {
               </h1>
 
               <p className="text-lg md:text-xl text-[#4B5563] max-w-3xl mx-auto mb-10">
-                Powered by the security of Cheqd and the trust of Verida.
+                Powered by World ID proof-of-human and Hedera agentic payments.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">

@@ -56,25 +56,25 @@ export async function POST() {
     // this one route rather than breaking every server render.
     const { signRequest } = await import('@worldcoin/idkit-core/signing');
 
-    const signature = await signRequest(
-      {
-        rp_id: WORLD_RP_ID,
-        nonce,
-        created_at: createdAt,
-        expires_at: expiresAt,
-      },
-      signingKey,
-    );
+    // `signRequest` generates the nonce and the created/expires window itself
+    // and returns them alongside the signature. The context has to be built
+    // from those values rather than the ones computed above, because the
+    // signature only covers what the SDK actually signed.
+    const signed = signRequest({
+      signingKeyHex: signingKey,
+      action: WORLD_ACTION,
+      ttl: CONTEXT_TTL_SECONDS,
+    });
 
     return NextResponse.json({
       live: true,
       action: WORLD_ACTION,
       rp_context: {
         rp_id: WORLD_RP_ID,
-        nonce,
-        created_at: createdAt,
-        expires_at: expiresAt,
-        signature,
+        nonce: signed.nonce,
+        created_at: signed.createdAt,
+        expires_at: signed.expiresAt,
+        signature: signed.sig,
       },
     });
   } catch (error) {
