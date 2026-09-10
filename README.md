@@ -24,13 +24,18 @@ money.
 
 ## Before this hackathon / built during ETHOnline 2026
 
-This is a Continuity Track submission. The repository has real history and this section says
-plainly what existed before the event and what did not.
+This is a Continuity Track submission, and this section says plainly what existed before the
+event and what did not.
 
-**Diff:** [`f043e29..HEAD`](../../compare/f043e29...HEAD) — `f043e29` is the last pre-event commit
-(2025-05-19). Everything from `8691f5c` onward was written during ETHOnline 2026.
+**Pre-event baseline:** the [`pre-ethonline`](../../tree/pre-ethonline) branch holds the codebase
+exactly as it stood before ETHOnline 2026, as a single baseline commit dated 2025-05-19 (tagged
+[`pre-ethonline-final`](../../releases/tag/pre-ethonline-final)). It is the parent of everything on
+`master`.
 
-| Pre-existing (Apr–May 2025, 63 commits) | Built during ETHOnline 2026 |
+**Diff:** [`pre-ethonline...master`](../../compare/pre-ethonline...master) is every line written
+during ETHOnline 2026 — the four commits on top of the baseline, all dated 2026-09-09 / 09-10.
+
+| Pre-existing (built Apr–May 2025) | Built during ETHOnline 2026 |
 |---|---|
 | Next.js 14 app shell, routing, ~40 Radix + Tailwind components, landing page, onboarding / profile / explore / chat / twin-creation screens | — |
 | Twin profile schema (life story, personality, values, communication) and its prompt builders | Reused unchanged, now driving paid twin-to-twin negotiation |
