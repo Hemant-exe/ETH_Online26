@@ -29,11 +29,13 @@ event and what did not.
 
 **Pre-event baseline:** the [`pre-ethonline`](../../tree/pre-ethonline) branch holds the codebase
 exactly as it stood before ETHOnline 2026, as a single baseline commit dated 2025-05-19 (tagged
-[`pre-ethonline-final`](../../releases/tag/pre-ethonline-final)). It is the parent of everything on
-`master`.
+[`pre-ethonline-final`](../../releases/tag/pre-ethonline-final)). The original commit-by-commit
+history from Apr–May 2025 is preserved on
+[`archive/full-history`](../../tree/archive/full-history).
 
-**Diff:** [`pre-ethonline...master`](../../compare/pre-ethonline...master) is every line written
-during ETHOnline 2026 — the four commits on top of the baseline, all dated 2026-09-09 / 09-10.
+**Diff:** [`pre-ethonline..master`](../../compare/pre-ethonline..master) is every line written
+during ETHOnline 2026. `master` itself carries only ETHOnline-dated commits; the baseline is on its
+own branch rather than in `master`'s ancestry, so use the two-dot form above to compare them.
 
 | Pre-existing (built Apr–May 2025) | Built during ETHOnline 2026 |
 |---|---|
