@@ -27,8 +27,14 @@ money.
 This is a Continuity Track submission. The repository has real history and this section says
 plainly what existed before the event and what did not.
 
-**Diff:** [`f043e29..HEAD`](../../compare/f043e29...HEAD) — `f043e29` is the last pre-event commit
-(2025-05-19). Everything from `8691f5c` onward was written during ETHOnline 2026.
+**Pre-event snapshot:** the codebase exactly as it stood before the event is preserved on the
+[`pre-ethonline`](../../tree/pre-ethonline) branch — last pre-event commit `f043e29` (2025-05-19),
+also tagged [`pre-ethonline-final`](../../releases/tag/pre-ethonline-final).
+
+**Diff:** [`pre-ethonline...archive/full-history`](../../compare/pre-ethonline...archive/full-history)
+shows every line written during ETHOnline 2026. The
+[`archive/full-history`](../../tree/archive/full-history) branch carries the unsquashed
+event commits; `master` carries the same tree as a single release commit.
 
 | Pre-existing (Apr–May 2025, 63 commits) | Built during ETHOnline 2026 |
 |---|---|
